@@ -1,0 +1,17 @@
+{
+  "$schema": "https://gofastmcp.com/public/schemas/fastmcp.json/v1.json",
+  "source": {
+    "path": "server.py",
+    "entrypoint": "mcp"
+  },
+  "deployment": {
+    "transport": "http",
+    "host": "0.0.0.0",
+    "port": 8000,
+    "path": "/mcp",
+    "env": {
+      "MEALIE_BASE_URL": "${MEALIE_BASE_URL}",
+      "MEALIE_API_TOKEN": "${MEALIE_API_TOKEN}"
+    }
+  }
+}

@@ -1,0 +1,548 @@
+<title>Better Mealie MCP · Setup Wizard</title>
+<style>
+  :root {
+    --paper:#f6f3ec; --surface:#fffdf8; --panel:#eee9dd; --panel-2:#e6e0d0;
+    --ink:#24211b; --muted:#6f6a5d; --faint:#938c7c; --line:#ded7c7;
+    --basil:#2f7d4f; --basil-2:#3ea968; --copper:#b5652f;
+    --code-bg:#232016; --code-ink:#ece7da; --code-line:#3a3527;
+    --code-key:#8fd3aa; --code-str:#e0b07a; --code-punc:#9a927f;
+    --radius:14px; --radius-sm:9px;
+    --shadow:0 1px 2px rgba(40,35,20,.06), 0 8px 24px -12px rgba(40,35,20,.18);
+    --fs-step:1.14;
+    --ui:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:#15130e; --surface:#1d1a13; --panel:#232016; --panel-2:#2b2719;
+      --ink:#ece7da; --muted:#a49d8b; --faint:#7d7666; --line:#332f22;
+      --basil:#58c184; --basil-2:#6ad098; --copper:#d98a4f;
+      --code-bg:#100e0a; --code-ink:#ece7da; --code-line:#2a271c;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="light"] {
+    --paper:#f6f3ec; --surface:#fffdf8; --panel:#eee9dd; --panel-2:#e6e0d0;
+    --ink:#24211b; --muted:#6f6a5d; --faint:#938c7c; --line:#ded7c7;
+    --basil:#2f7d4f; --basil-2:#3ea968; --copper:#b5652f;
+    --code-bg:#232016; --code-ink:#ece7da; --code-line:#3a3527;
+    --shadow:0 1px 2px rgba(40,35,20,.06), 0 8px 24px -12px rgba(40,35,20,.18);
+  }
+  :root[data-theme="dark"] {
+    --paper:#15130e; --surface:#1d1a13; --panel:#232016; --panel-2:#2b2719;
+    --ink:#ece7da; --muted:#a49d8b; --faint:#7d7666; --line:#332f22;
+    --basil:#58c184; --basil-2:#6ad098; --copper:#d98a4f;
+    --code-bg:#100e0a; --code-ink:#ece7da; --code-line:#2a271c;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--ui); line-height:1.55;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .wrap { max-width:1120px; margin:0 auto; padding:clamp(20px,4vw,52px) clamp(16px,4vw,40px) 72px; }
+
+  /* ---- header ---- */
+  header { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  .mark { width:46px; height:46px; flex:none; color:var(--basil); }
+  .title h1 { font-size:clamp(1.5rem,3.4vw,2.15rem); margin:0; letter-spacing:-.02em; font-weight:660; text-wrap:balance; }
+  .title p { margin:2px 0 0; color:var(--muted); font-size:.98rem; }
+  .badges { margin-left:auto; display:flex; gap:8px; flex-wrap:wrap; }
+  .badge {
+    font-family:var(--mono); font-size:.74rem; letter-spacing:.02em;
+    padding:5px 10px; border-radius:999px; border:1px solid var(--line);
+    background:var(--surface); color:var(--muted); white-space:nowrap;
+  }
+  .badge b { color:var(--basil); font-weight:600; }
+  .rule { height:1px; background:linear-gradient(90deg,var(--line),transparent); border:0; margin:26px 0 8px; }
+
+  /* ---- layout ---- */
+  .grid { display:grid; grid-template-columns:1fr; gap:28px; margin-top:20px; }
+  @media (min-width:940px){ .grid { grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:36px; align-items:start; } }
+
+  .step { display:flex; align-items:baseline; gap:11px; margin:0 0 14px; }
+  .step .n {
+    font-family:var(--mono); font-size:.72rem; font-weight:600;
+    width:22px; height:22px; flex:none; border-radius:6px;
+    display:grid; place-items:center; color:var(--basil);
+    background:color-mix(in oklab, var(--basil) 15%, transparent);
+    border:1px solid color-mix(in oklab, var(--basil) 30%, transparent);
+    transform:translateY(-1px);
+  }
+  .step h2 { font-size:1.02rem; margin:0; font-weight:620; letter-spacing:-.01em; }
+  .step .hint { color:var(--faint); font-size:.85rem; font-weight:400; margin-left:6px; }
+
+  fieldset { border:0; margin:0 0 30px; padding:0; }
+
+  /* ---- client cards ---- */
+  .clients { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+  @media (min-width:520px){ .clients { grid-template-columns:repeat(3,1fr); } }
+  .client {
+    appearance:none; cursor:pointer; text-align:left; font-family:var(--ui);
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm);
+    padding:12px 12px 11px; color:var(--ink); display:flex; flex-direction:column; gap:3px;
+    transition:border-color .15s, box-shadow .15s, background .15s, transform .05s;
+  }
+  .client:hover { border-color:color-mix(in oklab, var(--basil) 45%, var(--line)); }
+  .client:active { transform:translateY(1px); }
+  .client .cn { font-weight:600; font-size:.92rem; letter-spacing:-.01em; }
+  .client .cd { font-size:.76rem; color:var(--muted); line-height:1.35; }
+  .client[aria-pressed="true"] {
+    border-color:var(--basil); background:color-mix(in oklab, var(--basil) 9%, var(--surface));
+    box-shadow:0 0 0 1px var(--basil) inset;
+  }
+  .client:focus-visible { outline:2px solid var(--basil-2); outline-offset:2px; }
+
+  /* ---- segmented toggle ---- */
+  .seg { display:inline-flex; background:var(--panel); border:1px solid var(--line); border-radius:999px; padding:3px; gap:2px; }
+  .seg button {
+    appearance:none; border:0; background:transparent; cursor:pointer; font-family:var(--ui);
+    font-size:.83rem; font-weight:560; color:var(--muted); padding:6px 15px; border-radius:999px;
+    transition:color .15s, background .15s;
+  }
+  .seg button[aria-pressed="true"] { background:var(--surface); color:var(--ink); box-shadow:var(--shadow); }
+  .seg button:focus-visible { outline:2px solid var(--basil-2); outline-offset:2px; }
+  .seg button:disabled { opacity:.38; cursor:not-allowed; }
+
+  .row { display:flex; flex-direction:column; gap:6px; margin-bottom:15px; }
+  .row label { font-size:.82rem; font-weight:560; color:var(--ink); }
+  .row .sub { color:var(--faint); font-weight:400; }
+  .field { display:flex; align-items:center; gap:8px; }
+  input[type=text], input[type=password] {
+    width:100%; font-family:var(--mono); font-size:.86rem; color:var(--ink);
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm);
+    padding:10px 12px; transition:border-color .15s, box-shadow .15s;
+  }
+  input:focus { outline:0; border-color:var(--basil); box-shadow:0 0 0 3px color-mix(in oklab,var(--basil) 22%,transparent); }
+  input::placeholder { color:var(--faint); }
+  .ghost {
+    appearance:none; flex:none; cursor:pointer; font-family:var(--ui); font-size:.78rem; font-weight:560;
+    background:var(--panel); color:var(--muted); border:1px solid var(--line);
+    border-radius:var(--radius-sm); padding:9px 12px; white-space:nowrap; transition:color .15s,border-color .15s;
+  }
+  .ghost:hover { color:var(--ink); border-color:var(--faint); }
+  .ghost:focus-visible { outline:2px solid var(--basil-2); outline-offset:2px; }
+
+  /* ---- output ---- */
+  .out { position:sticky; top:20px; }
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+  .card-h { display:flex; align-items:center; gap:10px; padding:13px 16px; border-bottom:1px solid var(--line); background:var(--panel); }
+  .card-h .dot { width:9px; height:9px; border-radius:50%; background:var(--basil-2); box-shadow:0 0 0 3px color-mix(in oklab,var(--basil) 22%,transparent); flex:none; }
+  .card-h .ct { font-weight:620; font-size:.92rem; letter-spacing:-.01em; }
+  .card-h .cf { margin-left:auto; font-family:var(--mono); font-size:.72rem; color:var(--muted); background:var(--surface); border:1px solid var(--line); padding:3px 8px; border-radius:6px; }
+
+  .block { position:relative; }
+  .block + .block { border-top:1px solid var(--line); }
+  .block-lbl { font-family:var(--mono); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--faint); padding:11px 16px 0; }
+  pre {
+    margin:0; padding:10px 16px 18px; overflow-x:auto; background:transparent;
+    font-family:var(--mono); font-size:.8rem; line-height:1.65; color:var(--code-ink);
+  }
+  .codewrap { background:var(--code-bg); }
+  .codewrap pre { color:var(--code-ink); }
+  .codewrap .block-lbl { color:var(--code-punc); }
+  .tok-key { color:var(--code-key); }
+  .tok-str { color:var(--code-str); }
+  .tok-punc { color:var(--code-punc); }
+  .tok-cmt { color:var(--code-punc); font-style:italic; }
+
+  .copy {
+    position:absolute; top:9px; right:11px; z-index:2;
+    appearance:none; cursor:pointer; font-family:var(--ui); font-size:.74rem; font-weight:600;
+    display:inline-flex; align-items:center; gap:6px;
+    background:color-mix(in oklab,var(--basil) 16%, var(--code-bg)); color:var(--code-key);
+    border:1px solid color-mix(in oklab,var(--basil) 40%,transparent); border-radius:7px; padding:5px 10px;
+    transition:background .15s, color .15s;
+  }
+  .copy:hover { background:color-mix(in oklab,var(--basil) 28%, var(--code-bg)); }
+  .copy:focus-visible { outline:2px solid var(--basil-2); outline-offset:2px; }
+  .copy.done { color:#fff; background:var(--basil); border-color:var(--basil); }
+  .copy svg { width:13px; height:13px; }
+
+  .notes { padding:14px 16px 16px; font-size:.85rem; color:var(--muted); }
+  .notes p { margin:0 0 8px; }
+  .notes p:last-child { margin:0; }
+  .notes code { font-family:var(--mono); font-size:.82em; background:var(--panel); padding:1px 5px; border-radius:5px; color:var(--ink); }
+  .notes .warn { color:var(--copper); }
+  .notes a { color:var(--basil); text-decoration:none; border-bottom:1px solid color-mix(in oklab,var(--basil) 40%,transparent); }
+
+  /* ---- docker accordion ---- */
+  details.docker { margin-top:34px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+  details.docker summary { cursor:pointer; padding:15px 18px; font-weight:600; font-size:.94rem; list-style:none; display:flex; align-items:center; gap:10px; }
+  details.docker summary::-webkit-details-marker { display:none; }
+  details.docker summary .chev { margin-left:auto; transition:transform .2s; color:var(--muted); }
+  details.docker[open] summary .chev { transform:rotate(90deg); }
+  details.docker .body { padding:0 18px 18px; }
+  details.docker p { color:var(--muted); font-size:.86rem; margin:4px 0 12px; }
+  details.docker .codewrap { border-radius:var(--radius-sm); border:1px solid var(--code-line); }
+  details.docker code { font-family:var(--mono); background:var(--panel); padding:1px 5px; border-radius:5px; font-size:.82em; }
+
+  footer { margin-top:40px; padding-top:20px; border-top:1px solid var(--line); color:var(--faint); font-size:.8rem; display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
+  footer b { color:var(--basil); font-weight:600; }
+
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } details.docker summary .chev{ transition:none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <svg class="mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <path d="M9 21h30a0 0 0 0 1 0 0 15 15 0 0 1-15 15 15 15 0 0 1-15-15 0 0 0 0 1 0 0Z" fill="currentColor" opacity=".16"/>
+      <path d="M8 20.5h32M11 22a13 13 0 0 0 26 0" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M6.5 20.5h35" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+      <path d="M18 12c0-2.2 1.4-3 1.4-4.6C19.4 5.7 18 5 18 5M24 12c0-2.4 1.6-3.2 1.6-5C25.6 5 24 4.2 24 4.2M30 12c0-2.2 1.4-3 1.4-4.6C31.4 5.7 30 5 30 5"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+    </svg>
+    <div class="title">
+      <h1>Better Mealie MCP · Setup Wizard</h1>
+      <p>Point any AI client at your Mealie. Pick, fill, copy.</p>
+    </div>
+    <div class="badges">
+      <span class="badge"><b>259</b>&nbsp;tools</span>
+      <span class="badge">FastMCP</span>
+      <span class="badge">Mealie&nbsp;v3</span>
+    </div>
+  </header>
+
+  <hr class="rule">
+
+  <div class="grid">
+    <!-- ===== controls ===== -->
+    <div>
+      <fieldset>
+        <div class="step"><span class="n">1</span><h2>Choose your client<span class="hint">where you talk to Claude</span></h2></div>
+        <div class="clients" id="clients" role="group" aria-label="AI client"></div>
+      </fieldset>
+
+      <fieldset>
+        <div class="step"><span class="n">2</span><h2>Connection</h2></div>
+
+        <div class="row">
+          <label>Transport <span class="sub">— how the client reaches the server</span></label>
+          <div class="seg" id="transport" role="group" aria-label="Transport">
+            <button type="button" data-v="stdio" aria-pressed="true">stdio&nbsp;(local)</button>
+            <button type="button" data-v="http" aria-pressed="false">HTTP&nbsp;(remote)</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="url">Mealie base URL</label>
+          <input id="url" type="text" spellcheck="false" value="http://localhost:9925" autocomplete="off">
+        </div>
+
+        <div class="row" id="pathRow">
+          <label for="path">Path to this repo <span class="sub">— where <code style="font-family:var(--mono)">server.py</code> lives</span></label>
+          <input id="path" type="text" spellcheck="false" value="/Users/marcx/git/better-mealie-mcp" autocomplete="off">
+        </div>
+
+        <div class="row" id="hostRow" hidden>
+          <label for="hosturl">Server URL <span class="sub">— where you run the HTTP server</span></label>
+          <input id="hosturl" type="text" spellcheck="false" value="http://localhost:8000/mcp" autocomplete="off">
+        </div>
+
+        <div class="row">
+          <label>Authentication</label>
+          <div class="seg" id="authmode" role="group" aria-label="Auth mode">
+            <button type="button" data-v="token" aria-pressed="true">API token</button>
+            <button type="button" data-v="login" aria-pressed="false">Username / password</button>
+          </div>
+        </div>
+
+        <div class="row" id="tokenRow">
+          <label for="token">API token <span class="sub">— Mealie → Profile → Manage API Tokens</span></label>
+          <div class="field">
+            <input id="token" type="password" spellcheck="false" placeholder="paste your long-lived token" autocomplete="off">
+            <button type="button" class="ghost" id="revToken">Show</button>
+          </div>
+        </div>
+
+        <div class="row" id="userRow" hidden>
+          <label for="user">Username / email</label>
+          <input id="user" type="text" spellcheck="false" placeholder="changeme@example.com" autocomplete="off">
+        </div>
+        <div class="row" id="passRow" hidden>
+          <label for="pass">Password</label>
+          <div class="field">
+            <input id="pass" type="password" spellcheck="false" placeholder="MyPassword" autocomplete="off">
+            <button type="button" class="ghost" id="revPass">Show</button>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+
+    <!-- ===== output ===== -->
+    <div class="out">
+      <div class="step"><span class="n">3</span><h2>Copy &amp; run</h2></div>
+      <div class="card">
+        <div class="card-h">
+          <span class="dot"></span>
+          <span class="ct" id="outTitle">Claude Code</span>
+          <span class="cf" id="outFile">terminal</span>
+        </div>
+        <div id="output"></div>
+        <div class="notes" id="notes"></div>
+      </div>
+    </div>
+  </div>
+
+  <details class="docker">
+    <summary>🐳 No Mealie yet? Spin one up with Docker
+      <svg class="chev" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </summary>
+    <div class="body">
+      <p>Runs Mealie v3 on <code>http://localhost:9925</code>. Default admin login: <code>changeme@example.com</code> / <code>MyPassword</code>. Create an API token under Profile → Manage API Tokens, then paste it above.</p>
+      <div class="codewrap" style="position:relative">
+        <button class="copy" type="button" data-copy="docker"><svg viewBox="0 0 16 16" fill="none"><path d="M5.5 5.5V3.2c0-.4.3-.7.7-.7h6.6c.4 0 .7.3.7.7v6.6c0 .4-.3.7-.7.7h-2.3M2.5 6.9c0-.4.3-.7.7-.7h6.6c.4 0 .7.3.7.7v6.6c0 .4-.3.7-.7.7H3.2a.7.7 0 0 1-.7-.7z" stroke="currentColor" stroke-width="1.3"/></svg><span>Copy</span></button>
+        <pre id="dockerCode"></pre>
+      </div>
+    </div>
+  </details>
+
+  <footer>
+    <span>🍲 <b>Better Mealie MCP</b></span>
+    <span>Every endpoint, generated from the OpenAPI spec via FastMCP.</span>
+  </footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const CLIENTS = {
+    "claude-code":    { name:"Claude Code",    desc:"Anthropic CLI",              file:"terminal",                     kind:"cmd",  http:true },
+    "claude-desktop": { name:"Claude Desktop", desc:"macOS / Windows app",        file:"claude_desktop_config.json",   kind:"json", http:false },
+    "cursor":         { name:"Cursor",         desc:"~/.cursor/mcp.json",         file:"~/.cursor/mcp.json",           kind:"json", http:true },
+    "vscode":         { name:"VS Code",        desc:".vscode/mcp.json",           file:".vscode/mcp.json",             kind:"vscode", http:true },
+    "gemini":         { name:"Gemini CLI",     desc:"~/.gemini/settings.json",    file:"~/.gemini/settings.json",      kind:"json", http:true },
+    "chatgpt":        { name:"ChatGPT",        desc:"Developer mode connector",   file:"connector",                    kind:"chatgpt", http:true, forceHttp:true },
+  };
+
+  const ALIAS = "better-mealie-mcp";        // MCP server name registered in the client
+  const DEFPATH = "/path/to/better-mealie-mcp";
+
+  const state = {
+    client:"claude-code",
+    transport:"stdio",
+    auth:"token",
+    url:"http://localhost:9925",
+    path:"/Users/marcx/git/better-mealie-mcp",
+    hosturl:"http://localhost:8000/mcp",
+    token:"", user:"", pass:"",
+  };
+
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s).replace(/[&<>]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;" }[c]));
+
+  // ---- build client cards ----
+  const clientsEl = $("#clients");
+  Object.entries(CLIENTS).forEach(([id, c]) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "client"; b.dataset.id = id;
+    b.setAttribute("aria-pressed", id === state.client);
+    b.innerHTML = `<span class="cn">${esc(c.name)}</span><span class="cd">${esc(c.desc)}</span>`;
+    b.addEventListener("click", () => { state.client = id; syncClient(); render(); });
+    clientsEl.appendChild(b);
+  });
+
+  // ---- segmented + inputs ----
+  function bindSeg(sel, key, after) {
+    $(sel).querySelectorAll("button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (btn.disabled) return;
+        state[key] = btn.dataset.v;
+        $(sel).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === btn));
+        after && after(); render();
+      });
+    });
+  }
+  bindSeg("#transport", "transport", syncTransport);
+  bindSeg("#authmode", "auth", syncAuth);
+
+  const bindInput = (sel, key) => $(sel).addEventListener("input", e => { state[key] = e.target.value; render(); });
+  bindInput("#url","url"); bindInput("#path","path"); bindInput("#hosturl","hosturl");
+  bindInput("#token","token"); bindInput("#user","user"); bindInput("#pass","pass");
+
+  const reveal = (btnSel, inSel) => $(btnSel).addEventListener("click", () => {
+    const i = $(inSel); const show = i.type === "password";
+    i.type = show ? "text" : "password"; $(btnSel).textContent = show ? "Hide" : "Show";
+  });
+  reveal("#revToken","#token"); reveal("#revPass","#pass");
+
+  function syncClient() {
+    clientsEl.querySelectorAll(".client").forEach(b => b.setAttribute("aria-pressed", b.dataset.id === state.client));
+    const c = CLIENTS[state.client];
+    const httpBtn = $('#transport button[data-v="http"]');
+    const stdioBtn = $('#transport button[data-v="stdio"]');
+    if (c.forceHttp) { state.transport = "http"; httpBtn.disabled = false; stdioBtn.disabled = true; if(state.transport!=="http"){} }
+    else { stdioBtn.disabled = false; httpBtn.disabled = !c.http; }
+    if (!c.http && state.transport === "http") state.transport = "stdio";
+    if (c.forceHttp) state.transport = "http";
+    $("#transport").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x.dataset.v === state.transport));
+    syncTransport();
+  }
+  function syncTransport() {
+    const stdio = state.transport === "stdio";
+    $("#pathRow").hidden = !stdio;
+    $("#hostRow").hidden = stdio;
+  }
+  function syncAuth() {
+    const tok = state.auth === "token";
+    $("#tokenRow").hidden = !tok;
+    $("#userRow").hidden = tok;
+    $("#passRow").hidden = tok;
+  }
+
+  // ---- env pairs ----
+  function envPairs() {
+    const p = [["MEALIE_BASE_URL", state.url || "http://localhost:9925"]];
+    if (state.auth === "token") p.push(["MEALIE_API_TOKEN", state.token || "YOUR_API_TOKEN"]);
+    else { p.push(["MEALIE_USERNAME", state.user || "changeme@example.com"]); p.push(["MEALIE_PASSWORD", state.pass || "MyPassword"]); }
+    return p;
+  }
+  const stdioCmd = () => ({ command:"uv", args:["run","--directory", state.path || DEFPATH,"server.py"] });
+
+  // ---- syntax-highlight helpers ----
+  // Single-pass: the replacer output is never re-scanned, so injected <span>
+  // markup can't be matched again (the bug that leaked "tok-punc" into text).
+  const hlJson = obj => JSON.stringify(obj, null, 2)
+    .replace(/[&<>]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;" }[c]))
+    .replace(/("(?:[^"\\]|\\.)*")(\s*:)?/g, (m, str, colon) =>
+      colon ? `<span class="tok-key">${str}</span>${colon}`
+            : `<span class="tok-str">${str}</span>`);
+
+  // ---- config generators ----
+  function genConfig() {
+    const c = CLIENTS[state.client];
+    const env = envPairs();
+    const blocks = [];
+
+    // HTTP transport needs the server running first (except pure remote)
+    if (state.transport === "http") {
+      const envLine = env.map(([k,v]) => `${k}=${v}`).join(" ");
+      blocks.push({
+        lbl:"1 · start the HTTP server", code:true,
+        html: hlShell(`${envLine} \\\n  uv run --directory ${state.path || DEFPATH} server.py --http 8000`)
+      });
+    }
+
+    if (state.client === "claude-code") {
+      if (state.transport === "stdio") {
+        const flags = env.map(([k,v]) => `-e ${k}=${v}`).join(" \\\n  ");
+        blocks.push({ lbl:"run in terminal", code:true, html: hlShell(
+          `claude mcp add ${ALIAS} -s user \\\n  ${flags} \\\n  -- uv run --directory ${state.path || DEFPATH} server.py`) });
+      } else {
+        blocks.push({ lbl:"2 · register the URL", code:true, html: hlShell(
+          `claude mcp add --transport http ${ALIAS} ${state.hosturl || "http://localhost:8000/mcp"}`) });
+      }
+    }
+    else if (state.client === "vscode") {
+      const server = state.transport === "stdio"
+        ? { type:"stdio", ...stdioCmd(), env:Object.fromEntries(env) }
+        : { type:"http", url:state.hosturl || "http://localhost:8000/mcp" };
+      blocks.push({ lbl:c.file, code:true, json:true, html: hlJson({ servers:{ [ALIAS]:server } }) });
+    }
+    else if (state.client === "chatgpt") {
+      blocks.push({ lbl:"connector URL", code:true, html: hlShell(state.hosturl || "http://localhost:8000/mcp") });
+    }
+    else { // claude-desktop, cursor, gemini  → mcpServers JSON
+      const server = state.transport === "stdio"
+        ? { ...stdioCmd(), env:Object.fromEntries(env) }
+        : { url:state.hosturl || "http://localhost:8000/mcp" };
+      const key = state.transport === "stdio" ? "mcpServers"
+                : (state.client === "gemini" ? "mcpServers" : "mcpServers");
+      const label = state.transport === "http" ? c.file + "  (add url entry)" : c.file;
+      blocks.push({ lbl:label, code:true, json:true, html: hlJson({ [key]:{ [ALIAS]:server } }) });
+    }
+    return blocks;
+  }
+
+  function hlShell(str) {
+    // One pass, alternation ordered keyword | flag | assignment. Output is not
+    // re-scanned, so highlighting never matches inside its own injected spans.
+    return esc(str).replace(
+      /(\b(?:claude|uvx|uv|npx|docker|run)\b)|((?:^|\s)--?[A-Za-z][\w-]*)|(=)([^\s\\]+)/g,
+      (m, kw, flag, eq, val) => {
+        if (kw) return `<span class="tok-key">${kw}</span>`;
+        if (flag) return flag.replace(/(--?[A-Za-z][\w-]*)/, '<span class="tok-punc">$1</span>');
+        if (eq) return `${eq}<span class="tok-str">${val}</span>`;
+        return m;
+      });
+  }
+
+  function genNotes() {
+    const c = CLIENTS[state.client];
+    const n = [];
+    if (state.client === "claude-code") n.push(`Run the command, then <code>claude mcp list</code> — you want <b>${ALIAS} ✔ Connected</b>. Drop <code>-s user</code> to scope it to the current project only.`);
+    if (state.client === "claude-desktop") n.push(`Merge into <code>${c.file}</code>, then fully quit and reopen Claude Desktop. stdio only — Desktop can't reach an HTTP server.`);
+    if (state.client === "cursor") n.push(`Save to <code>~/.cursor/mcp.json</code> (global) or <code>.cursor/mcp.json</code> in a project, then toggle the server on in Settings → MCP.`);
+    if (state.client === "vscode") n.push(`Note the top-level key is <code>servers</code>, not <code>mcpServers</code>. Save to <code>.vscode/mcp.json</code> and start it from the MCP view.`);
+    if (state.client === "gemini") n.push(`Merge into <code>~/.gemini/settings.json</code>, then restart the Gemini CLI. Verify with <code>/mcp</code>.`);
+    if (state.client === "chatgpt") n.push(`<span class="warn">ChatGPT connectors are remote-only.</span> Run the HTTP server on a host ChatGPT can reach (public HTTPS via a reverse proxy or tunnel), then add the URL under Settings → Connectors in developer mode.`);
+
+    if (state.transport === "http") n.push(`Keep the server process running — the client connects to it over HTTP at <code>${esc(state.hosturl||"http://localhost:8000/mcp")}</code>.`);
+    if (state.auth === "token") n.push(state.token ? `Token embedded above.` : `No token entered yet — the placeholder <code>YOUR_API_TOKEN</code> is shown. Paste yours to bake it in.`);
+    else n.push(`Server logs in with these credentials at startup to fetch a token. An API token is preferred for anything long-lived.`);
+    return n.map(x => `<p>${x}</p>`).join("");
+  }
+
+  // ---- render ----
+  function render() {
+    const c = CLIENTS[state.client];
+    $("#outTitle").textContent = c.name;
+    $("#outFile").textContent = state.transport === "http" && c.file !== "connector" ? c.file + " · http" : c.file;
+
+    const blocks = genConfig();
+    const out = $("#output");
+    out.innerHTML = blocks.map((b, i) => `
+      <div class="block ${b.code ? "codewrap" : ""}">
+        <button class="copy" type="button" data-block="${i}">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M5.5 5.5V3.2c0-.4.3-.7.7-.7h6.6c.4 0 .7.3.7.7v6.6c0 .4-.3.7-.7.7h-2.3M2.5 6.9c0-.4.3-.7.7-.7h6.6c.4 0 .7.3.7.7v6.6c0 .4-.3.7-.7.7H3.2a.7.7 0 0 1-.7-.7z" stroke="currentColor" stroke-width="1.3"/></svg>
+          <span>Copy</span>
+        </button>
+        <div class="block-lbl">${esc(b.lbl)}</div>
+        <pre>${b.html}</pre>
+      </div>`).join("");
+
+    // store raw text for copy
+    out.querySelectorAll(".block").forEach((el, i) => {
+      el.querySelector("pre").dataset.raw = stripTags(blocks[i].html);
+    });
+    out.querySelectorAll(".copy").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const pre = btn.parentElement.querySelector("pre");
+        copyText(pre.dataset.raw, btn);
+      });
+    });
+
+    $("#notes").innerHTML = genNotes();
+    renderDocker();
+  }
+
+  function renderDocker() {
+    const code = `docker run -d --name mealie -p 9925:9000 \\\n  -e ALLOW_SIGNUP=true -e BASE_URL=http://localhost:9925 -e TZ=UTC \\\n  ghcr.io/mealie-recipes/mealie:latest`;
+    $("#dockerCode").innerHTML = hlShell(code);
+    const btn = document.querySelector('[data-copy="docker"]');
+    if (btn && !btn._bound) { btn._bound = true; btn.addEventListener("click", () => copyText(code, btn)); }
+  }
+
+  const stripTags = html => { const d = document.createElement("div"); d.innerHTML = html; return d.textContent; };
+
+  function copyText(text, btn) {
+    const done = () => {
+      btn.classList.add("done");
+      const span = btn.querySelector("span"); const old = span ? span.textContent : "";
+      if (span) span.textContent = "Copied";
+      setTimeout(() => { btn.classList.remove("done"); if (span) span.textContent = old || "Copy"; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(fallback);
+    else fallback();
+    function fallback() {
+      const ta = document.createElement("textarea"); ta.value = text; ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); } catch(e){} ta.remove(); done();
+    }
+  }
+
+  syncClient(); syncAuth(); render();
+})();
+</script>
