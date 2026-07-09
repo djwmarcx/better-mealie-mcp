@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -43,6 +44,30 @@ PASSWORD = os.environ.get("MEALIE_PASSWORD")
 TIMEOUT = float(os.environ.get("MEALIE_TIMEOUT", "60"))
 VERIFY_SSL = os.environ.get("MEALIE_VERIFY_SSL", "true").lower() not in ("false", "0", "no")
 SERVER_NAME = os.environ.get("MCP_SERVER_NAME", "Better Mealie MCP")
+# Optional tool filtering by Mealie API group (the first path segment, e.g.
+# "recipes", "households", "admin"). Fewer tools = leaner context / fits clients
+# that cap tool counts. INCLUDE wins if both are set; unset = every endpoint.
+INCLUDE_TAGS = [t.strip() for t in os.environ.get("MEALIE_INCLUDE_TAGS", "").split(",") if t.strip()]
+EXCLUDE_TAGS = [t.strip() for t in os.environ.get("MEALIE_EXCLUDE_TAGS", "").split(",") if t.strip()]
+
+
+def _route_maps() -> list[RouteMap]:
+    """Map Mealie groups to include/exclude per the env config.
+
+    Route maps are evaluated in order (first match wins), so listed groups get
+    their rule and a catch-all closes it out.
+    """
+    grp = lambda g: rf"^/api/{re.escape(g)}(/|$)"  # noqa: E731
+    if INCLUDE_TAGS:
+        return [RouteMap(pattern=grp(g), mcp_type=MCPType.TOOL) for g in INCLUDE_TAGS] + [
+            RouteMap(pattern=r".*", mcp_type=MCPType.EXCLUDE)
+        ]
+    if EXCLUDE_TAGS:
+        return [RouteMap(pattern=grp(g), mcp_type=MCPType.EXCLUDE) for g in EXCLUDE_TAGS] + [
+            RouteMap(pattern=r".*", mcp_type=MCPType.TOOL)
+        ]
+    # Default: EVERY route becomes a callable Tool. No exclusions.
+    return [RouteMap(pattern=r".*", mcp_type=MCPType.TOOL)]
 
 
 def _data_path(name: str) -> Path:
@@ -104,8 +129,7 @@ def build_server() -> FastMCP:
         # (MCP version == Mealie version).
         version=MEALIE_VERSION.lstrip("v"),
         instructions=f"Exposes every endpoint of the Mealie API ({MEALIE_VERSION}) as a tool.",
-        # EVERY route becomes a callable Tool. No exclusions.
-        route_maps=[RouteMap(pattern=r".*", mcp_type=MCPType.TOOL)],
+        route_maps=_route_maps(),
         mcp_names=build_names(spec),
     )
 

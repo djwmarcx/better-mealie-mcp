@@ -58,6 +58,31 @@ def render_tools(spec: dict, names: dict[str, str]) -> tuple[str, int]:
     return "\n".join(lines), total
 
 
+def group_counts(spec: dict, names: dict[str, str]) -> list[dict]:
+    """[{tag, count}] per Mealie group (first path segment), biggest first."""
+    meta = method_and_path(spec)
+    g: dict[str, int] = collections.Counter()
+    for oid in names:
+        _, p = meta[oid]
+        seg = [s for s in p.split("/") if s and s != "api"]
+        g[seg[0] if seg else "misc"] += 1
+    return [{"tag": t, "count": c} for t, c in sorted(g.items(), key=lambda kv: -kv[1])]
+
+
+def inject_groups(groups: list[dict]) -> None:
+    """Write the generated group list into the wizard between markers."""
+    if not WIZARD.exists():
+        return
+    payload = json.dumps(groups, separators=(",", ":"))
+    text = re.sub(
+        r"/\*GROUPS_START\*/.*?/\*GROUPS_END\*/",
+        f"/*GROUPS_START*/{payload}/*GROUPS_END*/",
+        WIZARD.read_text(),
+        flags=re.DOTALL,
+    )
+    WIZARD.write_text(text)
+
+
 def sync_counts(total: int) -> None:
     """Point every tool-count badge at `total`.
 
@@ -97,7 +122,8 @@ def main() -> int:
     text, total = render_tools(spec, names)
     TOOLS.write_text(text)
     sync_counts(total)
-    print(f"TOOLS.md + badges synced to {total} tools")
+    inject_groups(group_counts(spec, names))
+    print(f"TOOLS.md + badges + wizard groups synced to {total} tools")
     return 0
 
 

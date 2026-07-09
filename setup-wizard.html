@@ -232,6 +232,24 @@
   .method[aria-pressed="true"] { border-color:var(--basil); background:color-mix(in oklab,var(--basil) 10%,var(--surface)); box-shadow:0 0 0 1.5px var(--basil) inset; }
   .method[aria-pressed="true"] .micon { color:var(--basil); }
   .method:focus-visible { outline:2px solid var(--basil-2); outline-offset:2px; }
+
+  /* ---- tool-group chips ---- */
+  .grouphelp { font-size:.85rem; color:var(--muted); margin:0 0 12px; line-height:1.5; }
+  .grouphelp code { font-family:var(--mono); font-size:.82em; background:var(--panel); padding:1px 5px; border-radius:5px; color:var(--ink); }
+  .grouphelp b { color:var(--basil); }
+  .groups { display:flex; flex-wrap:wrap; gap:8px; }
+  .gchip {
+    appearance:none; cursor:pointer; font-family:var(--ui); font-size:.84rem; color:var(--ink);
+    background:var(--surface); border:1px solid var(--line); border-radius:999px;
+    padding:7px 13px; display:inline-flex; align-items:center; gap:7px; transition:border-color .15s, background .15s;
+  }
+  .gchip:hover { border-color:color-mix(in oklab,var(--basil) 45%,var(--line)); }
+  .gchip .gc { font-family:var(--mono); font-size:.74rem; color:var(--faint); }
+  .gchip[aria-pressed="true"] { border-color:var(--basil); background:color-mix(in oklab,var(--basil) 12%,var(--surface)); }
+  .gchip[aria-pressed="true"] .gc { color:var(--basil); }
+  .gchip:focus-visible { outline:2px solid var(--basil-2); outline-offset:2px; }
+  .groupsum { font-size:.82rem; color:var(--faint); margin:12px 0 0; min-height:1.2em; }
+  .groupsum b { color:var(--basil); }
   .step .hint a { color:var(--basil); text-decoration:none; border-bottom:1px solid color-mix(in oklab,var(--basil) 35%,transparent); }
   .step .hint a:hover { color:var(--basil-2); }
 
@@ -360,6 +378,13 @@
           </div>
         </div>
       </fieldset>
+
+      <fieldset>
+        <div class="step"><span class="n">+</span><h2>Limit tools<span class="hint">optional — leaner context, or fit a client that caps tool counts</span></h2></div>
+        <p class="grouphelp">All <b id="allcount">259</b> endpoints are exposed by default. Pick groups to expose only those (<code>MEALIE_INCLUDE_TAGS</code>):</p>
+        <div class="groups" id="toolgroups" role="group" aria-label="Tool groups"></div>
+        <p class="groupsum" id="groupsum"></p>
+      </fieldset>
     </div>
 
     <!-- ===== output ===== -->
@@ -423,6 +448,10 @@
   const DEFPATH = "/path/to/better-mealie-mcp";
   const IMAGE = "ghcr.io/djwmarcx/better-mealie-mcp";
 
+  // Mealie API groups + tool counts — generated from the spec by gen_tools.py.
+  const GROUPS = /*GROUPS_START*/[{"tag":"households","count":64},{"tag":"recipes","count":42},{"tag":"admin","count":38},{"tag":"groups","count":26},{"tag":"organizers","count":20},{"tag":"users","count":17},{"tag":"explore","count":15},{"tag":"foods","count":6},{"tag":"units","count":6},{"tag":"auth","count":5},{"tag":"comments","count":5},{"tag":"media","count":5},{"tag":"shared","count":4},{"tag":"app","count":3},{"tag":"parser","count":2},{"tag":"utils","count":1}]/*GROUPS_END*/;
+  const TOTAL = GROUPS.reduce((n, g) => n + g.count, 0);
+
   const state = {
     client:"claude-code",
     method:"docker",            // docker | source
@@ -431,7 +460,7 @@
     url:"http://localhost:9925",
     path:"/path/to/better-mealie-mcp",
     hosturl:"http://localhost:8000/mcp",
-    token:"", user:"", pass:"",
+    token:"", user:"", pass:"", tags:[],
   };
 
   const $ = s => document.querySelector(s);
@@ -446,6 +475,23 @@
     b.innerHTML = `<span class="cn">${esc(c.name)}</span><span class="cd">${esc(c.desc)}</span>`;
     b.addEventListener("click", () => { state.client = id; syncClient(); render(); });
     clientsEl.appendChild(b);
+  });
+
+  // ---- build tool-group chips (generated list) ----
+  const groupsEl = $("#toolgroups");
+  $("#allcount").textContent = String(TOTAL);
+  GROUPS.forEach(({tag, count}) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "gchip"; b.dataset.tag = tag;
+    b.setAttribute("aria-pressed", "false");
+    b.innerHTML = `${esc(tag)} <span class="gc">${count}</span>`;
+    b.addEventListener("click", () => {
+      const i = state.tags.indexOf(tag);
+      if (i === -1) state.tags.push(tag); else state.tags.splice(i, 1);
+      b.setAttribute("aria-pressed", i === -1);
+      render();
+    });
+    groupsEl.appendChild(b);
   });
 
   // ---- segmented + inputs ----
@@ -509,7 +555,16 @@
     const p = [["MEALIE_BASE_URL", state.url || "http://localhost:9925"]];
     if (state.auth === "token") p.push(["MEALIE_API_TOKEN", state.token || "YOUR_API_TOKEN"]);
     else { p.push(["MEALIE_USERNAME", state.user || "changeme@example.com"]); p.push(["MEALIE_PASSWORD", state.pass || "MyPassword"]); }
+    if (state.tags.length) p.push(["MEALIE_INCLUDE_TAGS", state.tags.join(",")]);
     return p;
+  }
+  function updateGroupSummary() {
+    const n = state.tags.length
+      ? GROUPS.filter(g => state.tags.includes(g.tag)).reduce((s, g) => s + g.count, 0)
+      : TOTAL;
+    $("#groupsum").innerHTML = state.tags.length
+      ? `Exposing <b>${n}</b> of ${TOTAL} tools — <code style="font-family:var(--mono)">MEALIE_INCLUDE_TAGS=${esc(state.tags.join(","))}</code>`
+      : `Exposing all <b>${TOTAL}</b> tools (no filter).`;
   }
   // ---- method-aware command builders ----
   function stdioCmd(env) {
@@ -650,6 +705,7 @@
     $("#notes").innerHTML = genNotes();
     renderInstall();
     renderDocker();
+    updateGroupSummary();
   }
 
   function renderInstall() {

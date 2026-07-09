@@ -87,6 +87,14 @@ Auth (set in `.env` or the environment):
 | `MEALIE_TIMEOUT` | Per-request timeout, seconds (default 60) |
 | `MEALIE_VERIFY_SSL` | Verify TLS cert; `false` to accept self-signed (default true) |
 | `MCP_SERVER_NAME` | MCP name advertised to clients (default `Mealie`) |
+| `MEALIE_INCLUDE_TAGS` | Expose **only** these API groups, comma-separated (e.g. `recipes,shopping-lists`). Fewer tools = leaner context / fits clients that cap tool counts |
+| `MEALIE_EXCLUDE_TAGS` | Expose everything **except** these groups (e.g. `admin,households`) |
+
+Groups are the first path segment (`recipes`, `households`, `admin`, `groups`,
+`organizers`, `users`, `explore`, `foods`, `units`, `auth`, `comments`, `media`,
+`shared`, `app`, `parser`, `utils`). Unset = all 259 tools. `INCLUDE` wins if
+both are set. The [Setup Wizard](https://djwmarcx.github.io/better-mealie-mcp/)
+has a checkbox picker that fills `MEALIE_INCLUDE_TAGS` for you.
 
 ## ▶️ Run
 
