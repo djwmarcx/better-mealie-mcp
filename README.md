@@ -8,6 +8,12 @@
   <img src="https://img.shields.io/badge/python-3.13%2B-blue" alt="Python 3.13+">
   <img src="https://img.shields.io/badge/Mealie-v3.20.1-brightgreen" alt="Mealie v3.20.1">
 </p>
+<p>
+  <a href="https://github.com/djwmarcx/better-mealie-mcp/actions/workflows/pages.yml"><img src="https://img.shields.io/github/actions/workflow/status/djwmarcx/better-mealie-mcp/pages.yml?branch=main&label=setup%20wizard" alt="Setup wizard deploy"></a>
+  <a href="https://github.com/djwmarcx/better-mealie-mcp/actions/workflows/update-spec.yml"><img src="https://img.shields.io/github/actions/workflow/status/djwmarcx/better-mealie-mcp/update-spec.yml?label=spec%20sync" alt="Spec sync"></a>
+  <a href="https://github.com/djwmarcx/better-mealie-mcp/releases"><img src="https://img.shields.io/github/v/release/djwmarcx/better-mealie-mcp?sort=semver&label=release" alt="Latest release"></a>
+  <a href="https://github.com/djwmarcx/better-mealie-mcp/blob/main/.github/renovate.json5"><img src="https://img.shields.io/badge/Renovate-enabled-brightgreen?logo=renovatebot&logoColor=white" alt="Renovate enabled"></a>
+</p>
 
 <em>An MCP server exposing <strong>every</strong> <a href="https://mealie.io">Mealie</a> API endpoint —<br>
 all 259 operations, none excluded. Manage recipes, meal plans, shopping lists,<br>
