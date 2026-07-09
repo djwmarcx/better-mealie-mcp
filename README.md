@@ -140,7 +140,9 @@ FastMCP disambiguates the path parameter with a `__path` suffix (`slug__path`).
 image, reads its real version from `/api/app/about`
 ([`MEALIE_VERSION`](./MEALIE_VERSION)), pulls `/openapi.json`, regenerates
 [TOOLS.md](./TOOLS.md) + counts, and — **only when the spec actually changed** —
-bumps the version, commits, and cuts a
+bumps the version and **opens a pull request** (main is protected, so every
+change lands via PR). When that PR merges,
+[`release-on-spec`](.github/workflows/release-on-spec.yml) cuts a
 [release](https://github.com/djwmarcx/better-mealie-mcp/releases) (spec attached,
 notes listing added/removed tools). Volatile server-clock defaults are stripped
 so an unchanged run is a true no-op.

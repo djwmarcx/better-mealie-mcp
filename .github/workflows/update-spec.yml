@@ -19,6 +19,7 @@ env:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: update-spec
@@ -65,7 +66,7 @@ jobs:
           curl -fsSL http://localhost:9925/openapi.json -o openapi.json
           python scripts/gen_tools.py   # normalizes + pretty-writes openapi.json
 
-      - name: Commit + release if the spec changed
+      - name: Open a PR if the spec changed
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -78,19 +79,22 @@ jobs:
           TOOLS="$(python -c "import json;from naming import build_names;print(len(build_names(json.load(open('openapi.json')))))")"
           python scripts/set_version.py "$MEALIE_VERSION" "$DATE" "$TOOLS"
           python scripts/spec_diff.py /tmp/old-spec.json openapi.json > /tmp/notes.md
-          echo "----- release notes -----"; cat /tmp/notes.md
+          echo "----- proposed change -----"; cat /tmp/notes.md
 
+          BRANCH="bot/spec-${MEALIE_VERSION}-${DATE}"
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
           git add -A
           git commit -m "chore: sync Mealie OpenAPI spec (${MEALIE_VERSION})"
-          git push
+          git push -f origin "$BRANCH"
 
-          TAG="spec-${MEALIE_VERSION}-${DATE}"
-          gh release create "$TAG" openapi.json \
-            --title "Mealie ${MEALIE_VERSION} — ${DATE}" \
-            --notes-file /tmp/notes.md \
-            --target "$(git rev-parse HEAD)"
+          # Open the PR, or refresh its body if one is already open for this branch.
+          # main is protected — the release is cut on merge by release-on-spec.yml.
+          gh pr create --base main --head "$BRANCH" \
+            --title "chore: sync Mealie OpenAPI spec (${MEALIE_VERSION})" \
+            --body-file /tmp/notes.md \
+          || gh pr edit "$BRANCH" --body-file /tmp/notes.md
 
       - name: Stop Mealie
         if: always()
