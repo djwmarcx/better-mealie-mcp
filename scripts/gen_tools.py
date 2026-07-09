@@ -58,11 +58,30 @@ def render_tools(spec: dict, names: dict[str, str]) -> tuple[str, int]:
     return "\n".join(lines), total
 
 
-def old_count() -> int | None:
-    if not TOOLS.exists():
-        return None
-    m = re.search(r"\*\*(\d+) tools\*\*", TOOLS.read_text())
-    return int(m.group(1)) if m else None
+def sync_counts(total: int) -> None:
+    """Point every tool-count badge at `total`.
+
+    Count-agnostic: matches the badge/label shape, not a specific number, so it
+    stays correct forever and never needs to know the previous count. The number
+    lives only in these generated/badge spots — prose says "every endpoint".
+    """
+    n = str(total)
+    edits = [
+        (README, [
+            (r"(badge/tools-)\d+(-)", rf"\g<1>{n}\g<2>"),       # shields badge
+            (r'(alt=")\d+( tools")', rf"\g<1>{n}\g<2>"),        # badge alt text
+        ]),
+        (WIZARD, [
+            (r"(<b>)\d+(</b>&nbsp;tools)", rf"\g<1>{n}\g<2>"),  # header chip
+        ]),
+    ]
+    for path, subs in edits:
+        if not path.exists():
+            continue
+        text = path.read_text()
+        for pattern, repl in subs:
+            text = re.sub(pattern, repl, text)
+        path.write_text(text)
 
 
 def main() -> int:
@@ -75,16 +94,10 @@ def main() -> int:
         f.write("\n")
 
     names = build_names(spec)
-    prev = old_count()
     text, total = render_tools(spec, names)
     TOOLS.write_text(text)
-    print(f"TOOLS.md: {total} tools (was {prev})")
-
-    if prev is not None and prev != total:
-        for f in (README, WIZARD):
-            if f.exists():
-                f.write_text(re.sub(rf"\b{prev}\b", str(total), f.read_text()))
-        print(f"Updated tool count {prev} -> {total} in README.md, setup-wizard.html")
+    sync_counts(total)
+    print(f"TOOLS.md + badges synced to {total} tools")
     return 0
 
 
