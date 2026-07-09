@@ -33,6 +33,14 @@ def main(mealie_version: str, date: str, tools: str) -> int:
     )
     pyproject.write_text(text)
 
+    # Keep the README's Mealie-version badge in sync.
+    readme = ROOT / "README.md"
+    if readme.exists():
+        rt = readme.read_text()
+        rt = re.sub(r"Mealie-v[0-9][0-9.]*-brightgreen", f"Mealie-{mealie_version}-brightgreen", rt)
+        rt = re.sub(r'alt="Mealie v[0-9][0-9.]*"', f'alt="Mealie {mealie_version}"', rt)
+        readme.write_text(rt)
+
     versions = ROOT / "VERSIONS.md"
     lines = versions.read_text().splitlines()
     row = f"| {mcp_version} | {mealie_version} | {date} | {tools} |"

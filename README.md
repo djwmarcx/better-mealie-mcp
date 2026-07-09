@@ -134,17 +134,19 @@ FastMCP disambiguates the path parameter with a `__path` suffix (`slug__path`).
 `3.20.1` ⇒ Mealie `v3.20.1`. The server advertises it to clients, and
 [VERSIONS.md](./VERSIONS.md) maps every release to its Mealie version and date.
 
-`openapi.json` is a vendored copy of Mealie's spec, generated from a **pinned
-Mealie Docker image** ([`MEALIE_VERSION`](./MEALIE_VERSION)). The
-[`update-spec`](.github/workflows/update-spec.yml) workflow boots that image,
-reads its real version from `/api/app/about`, pulls `/openapi.json`, regenerates
+`openapi.json` is a vendored copy of Mealie's spec. The
+[`update-spec`](.github/workflows/update-spec.yml) workflow runs daily and
+**auto-tracks the latest stable Mealie release** (`mealie:latest`): it boots that
+image, reads its real version from `/api/app/about`
+([`MEALIE_VERSION`](./MEALIE_VERSION)), pulls `/openapi.json`, regenerates
 [TOOLS.md](./TOOLS.md) + counts, and — **only when the spec actually changed** —
 bumps the version, commits, and cuts a
 [release](https://github.com/djwmarcx/better-mealie-mcp/releases) (spec attached,
 notes listing added/removed tools). Volatile server-clock defaults are stripped
 so an unchanged run is a true no-op.
 
-Move to a new Mealie version by bumping `MEALIE_TAG_DEFAULT` in the workflow (or
-run it manually with a `mealie_tag` input — `latest`, `nightly`, or any tag).
+To freeze on one release instead of tracking latest, set `MEALIE_TAG_DEFAULT` in
+the workflow to a specific tag (e.g. `v3.20.1`), or run it manually with a
+`mealie_tag` input (`latest`, `nightly`, or any tag).
 - A few endpoints (`list_auth_oauth*`) return 500 unless OIDC is configured on
   the Mealie side — that's Mealie behavior, not the server.

@@ -10,10 +10,12 @@ on:
         required: false
         default: ""
 
-# Pinned Mealie image tag. Bump this (or dispatch with an input) to move to a
-# new Mealie version — the run then regenerates the spec and cuts a release.
+# Auto-track the latest stable Mealie release. Each run pulls that image's real
+# version; when the spec changes, the run bumps the version and cuts a release.
+# Pin a specific version here (e.g. "v3.20.1") or via the dispatch input to
+# freeze on one release instead.
 env:
-  MEALIE_TAG_DEFAULT: "v3.20.1"
+  MEALIE_TAG_DEFAULT: "latest"
 
 permissions:
   contents: write
