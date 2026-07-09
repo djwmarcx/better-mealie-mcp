@@ -34,12 +34,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          VER="$(cat MEALIE_VERSION)"
-          DATE="$(date -u +%Y-%m-%d)"
-          TAG="spec-${VER}-${DATE}"
+          VER="$(cat MEALIE_VERSION)"   # e.g. v3.20.1 — semver tag, mirrors the MCP version
 
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            echo "Release $TAG already exists — nothing to do."
+          if gh release view "$VER" >/dev/null 2>&1; then
+            echo "Release $VER already exists — nothing to do."
             exit 0
           fi
 
@@ -47,6 +45,7 @@ jobs:
           python scripts/spec_diff.py /tmp/old-spec.json openapi.json > /tmp/notes.md
           echo "----- release notes -----"; cat /tmp/notes.md
 
-          gh release create "$TAG" openapi.json \
-            --title "Mealie ${VER} — ${DATE}" \
-            --notes-file /tmp/notes.md
+          gh release create "$VER" openapi.json \
+            --title "Mealie ${VER}" \
+            --notes-file /tmp/notes.md \
+            --latest
