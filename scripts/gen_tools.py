@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from naming import build_names, normalize  # noqa: E402
+from better_mealie_mcp.naming import build_names, normalize  # noqa: E402
 
 SPEC = ROOT / "openapi.json"
 TOOLS = ROOT / "TOOLS.md"

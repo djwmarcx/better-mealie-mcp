@@ -64,7 +64,25 @@ steps are written out below.
 
 ## 🚀 Setup
 
+**Docker (GHCR image):**
+
 ```bash
+docker pull ghcr.io/djwmarcx/better-mealie-mcp
+docker run -i --rm \
+  -e MEALIE_BASE_URL=http://host.docker.internal:9925 \
+  -e MEALIE_API_TOKEN=... \
+  ghcr.io/djwmarcx/better-mealie-mcp            # stdio; add `--http 8000` for HTTP
+```
+
+Images are published on each release, tagged `<mealie-version>` and `latest`.
+Inside a container, `localhost` is the container — point `MEALIE_BASE_URL` at
+`host.docker.internal` (macOS/Windows) or your host's LAN IP (Linux).
+
+**From source:**
+
+```bash
+git clone https://github.com/djwmarcx/better-mealie-mcp
+cd better-mealie-mcp
 uv sync                     # install deps
 cp .env.example .env        # then edit .env with your Mealie URL + token
 ```
@@ -83,11 +101,15 @@ Auth (set in `.env` or the environment):
 ## ▶️ Run
 
 ```bash
-uv run server.py                 # stdio transport (for MCP clients)
-uv run server.py --http 8000     # streamable-http on 127.0.0.1:8000
-fastmcp run fastmcp.json         # via FastMCP project config (stdio)
-fastmcp run fastmcp-http.json    # via FastMCP project config (http)
+uv run better-mealie-mcp             # stdio transport (for MCP clients)
+uv run better-mealie-mcp --http 8000 # streamable-http on 127.0.0.1:8000
+uv run server.py                     # same server, back-compat entry
+fastmcp run fastmcp.json             # via FastMCP project config (stdio)
+fastmcp run fastmcp-http.json        # via FastMCP project config (http)
 ```
+
+In `--http` mode the bind address comes from `MCP_HOST` (default `127.0.0.1`;
+the Docker image sets `0.0.0.0` so `-p` port mapping works).
 
 ## 🔌 Use with Claude
 

@@ -76,7 +76,7 @@ jobs:
           fi
 
           DATE="$(date -u +%Y-%m-%d)"
-          TOOLS="$(python -c "import json;from naming import build_names;print(len(build_names(json.load(open('openapi.json')))))")"
+          TOOLS="$(python -c "import json;from better_mealie_mcp.naming import build_names;print(len(build_names(json.load(open('openapi.json')))))")"
           python scripts/set_version.py "$MEALIE_VERSION" "$DATE" "$TOOLS"
           python scripts/spec_diff.py /tmp/old-spec.json openapi.json > /tmp/notes.md
           echo "----- proposed change -----"; cat /tmp/notes.md

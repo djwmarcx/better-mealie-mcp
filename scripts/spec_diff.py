@@ -16,7 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from naming import build_names  # noqa: E402
+from better_mealie_mcp.naming import build_names  # noqa: E402
 
 
 def tool_map(spec: dict) -> dict[str, str]:
