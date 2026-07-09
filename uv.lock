@@ -69,7 +69,7 @@ wheels = [
 [[package]]
 name = "better-mealie-mcp"
 version = "3.20.1"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "fastmcp" },
     { name = "httpx" },

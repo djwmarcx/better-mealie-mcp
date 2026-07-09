@@ -1,0 +1,12 @@
+.git
+.github
+.venv
+__pycache__
+*.pyc
+.env
+scripts
+setup-wizard.html
+TOOLS.md
+VERSIONS.md
+fastmcp*.json
+server.py

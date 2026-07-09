@@ -1,0 +1,41 @@
+name: Publish Docker image
+
+# Runs when a release is published (release-on-spec cuts one per Mealie
+# version) — ships the same version as a Docker image on GHCR:
+#   ghcr.io/djwmarcx/better-mealie-mcp:<version>  and  :latest
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-docker
+  cancel-in-progress: false
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Log in to GHCR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACTOR: ${{ github.actor }}
+        run: printf '%s' "$GH_TOKEN" | docker login ghcr.io -u "$ACTOR" --password-stdin
+
+      - name: Build and push image
+        env:
+          REPO: ${{ github.repository }}
+        run: |
+          VER="$(tr -d 'v[:space:]' < MEALIE_VERSION)"
+          IMG="ghcr.io/$REPO"
+          docker build -t "$IMG:$VER" -t "$IMG:latest" .
+          docker push "$IMG:$VER"
+          docker push "$IMG:latest"

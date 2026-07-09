@@ -259,10 +259,16 @@
   <hr class="rule">
 
   <section class="prereq">
-    <div class="step"><span class="n">1</span><h2>Get the code<span class="hint">needs Python 3.14+ and <a href="https://docs.astral.sh/uv/">uv</a></span></h2></div>
+    <div class="step"><span class="n">1</span><h2>Install<span class="hint" id="installHint">needs Python 3.14+ and <a href="https://docs.astral.sh/uv/">uv</a></span></h2></div>
+    <div class="row">
+      <div class="seg" id="method" role="group" aria-label="Install method">
+        <button type="button" data-v="source" aria-pressed="true">From&nbsp;source</button>
+        <button type="button" data-v="docker" aria-pressed="false">Docker</button>
+      </div>
+    </div>
     <div class="codewrap" style="position:relative">
-      <button class="copy" type="button" data-copy="clone"><svg viewBox="0 0 16 16" fill="none"><path d="M5.5 5.5V3.2c0-.4.3-.7.7-.7h6.6c.4 0 .7.3.7.7v6.6c0 .4-.3.7-.7.7h-2.3M2.5 6.9c0-.4.3-.7.7-.7h6.6c.4 0 .7.3.7.7v6.6c0 .4-.3.7-.7.7H3.2a.7.7 0 0 1-.7-.7z" stroke="currentColor" stroke-width="1.3"/></svg><span>Copy</span></button>
-      <pre id="cloneCode"></pre>
+      <button class="copy" type="button" data-copy="install"><svg viewBox="0 0 16 16" fill="none"><path d="M5.5 5.5V3.2c0-.4.3-.7.7-.7h6.6c.4 0 .7.3.7.7v6.6c0 .4-.3.7-.7.7h-2.3M2.5 6.9c0-.4.3-.7.7-.7h6.6c.4 0 .7.3.7.7v6.6c0 .4-.3.7-.7.7H3.2a.7.7 0 0 1-.7-.7z" stroke="currentColor" stroke-width="1.3"/></svg><span>Copy</span></button>
+      <pre id="installCode"></pre>
     </div>
   </section>
 
@@ -389,9 +395,11 @@
 
   const ALIAS = "better-mealie-mcp";        // MCP server name registered in the client
   const DEFPATH = "/path/to/better-mealie-mcp";
+  const IMAGE = "ghcr.io/djwmarcx/better-mealie-mcp";
 
   const state = {
     client:"claude-code",
+    method:"source",            // source | docker
     transport:"stdio",
     auth:"token",
     url:"http://localhost:9925",
@@ -425,6 +433,7 @@
       });
     });
   }
+  bindSeg("#method", "method", syncMethod);
   bindSeg("#transport", "transport", syncTransport);
   bindSeg("#authmode", "auth", syncAuth);
 
@@ -450,9 +459,16 @@
     $("#transport").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x.dataset.v === state.transport));
     syncTransport();
   }
+  function syncMethod() {
+    $("#installHint").innerHTML = state.method === "docker"
+      ? 'needs <a href="https://docs.docker.com/get-docker/">Docker</a>'
+      : 'needs Python 3.14+ and <a href="https://docs.astral.sh/uv/">uv</a>';
+    syncTransport();
+  }
   function syncTransport() {
     const stdio = state.transport === "stdio";
-    $("#pathRow").hidden = !stdio;
+    // the repo path only matters when running from a source checkout
+    $("#pathRow").hidden = !stdio || state.method !== "source";
     $("#hostRow").hidden = stdio;
   }
   function syncAuth() {
@@ -469,7 +485,28 @@
     else { p.push(["MEALIE_USERNAME", state.user || "changeme@example.com"]); p.push(["MEALIE_PASSWORD", state.pass || "MyPassword"]); }
     return p;
   }
-  const stdioCmd = () => ({ command:"uv", args:["run","--directory", state.path || DEFPATH,"server.py"] });
+  // ---- method-aware command builders ----
+  function stdioCmd(env) {
+    if (state.method === "docker") {
+      // `-e KEY` (no value) forwards the vars the client sets via `env` below
+      const args = ["run","-i","--rm"];
+      env.forEach(([k]) => args.push("-e", k));
+      args.push(IMAGE);
+      return { command:"docker", args };
+    }
+    return { command:"uv", args:["run","--directory", state.path || DEFPATH,"server.py"] };
+  }
+  function stdioShell(env) {   // what goes after `--` in `claude mcp add`
+    if (state.method === "docker")
+      return `docker run -i --rm ${env.map(([k]) => `-e ${k}`).join(" ")} ${IMAGE}`;
+    return `uv run --directory ${state.path || DEFPATH} server.py`;
+  }
+  function httpStart(env) {    // command that starts the HTTP server
+    const envLine = env.map(([k,v]) => `${k}=${v}`).join(" ");
+    if (state.method === "docker")
+      return `docker run --rm -p 8000:8000 \\\n  ${env.map(([k,v]) => `-e ${k}=${v}`).join(" \\\n  ")} \\\n  ${IMAGE} --http 8000`;
+    return `${envLine} \\\n  uv run --directory ${state.path || DEFPATH} server.py --http 8000`;
+  }
 
   // ---- syntax-highlight helpers ----
   // Single-pass: the replacer output is never re-scanned, so injected <span>
@@ -488,10 +525,9 @@
 
     // HTTP transport needs the server running first (except pure remote)
     if (state.transport === "http") {
-      const envLine = env.map(([k,v]) => `${k}=${v}`).join(" ");
       blocks.push({
         lbl:"1 · start the HTTP server", code:true,
-        html: hlShell(`${envLine} \\\n  uv run --directory ${state.path || DEFPATH} server.py --http 8000`)
+        html: hlShell(httpStart(env))
       });
     }
 
@@ -499,7 +535,7 @@
       if (state.transport === "stdio") {
         const flags = env.map(([k,v]) => `-e ${k}=${v}`).join(" \\\n  ");
         blocks.push({ lbl:"run in terminal", code:true, html: hlShell(
-          `claude mcp add ${ALIAS} -s user \\\n  ${flags} \\\n  -- uv run --directory ${state.path || DEFPATH} server.py`) });
+          `claude mcp add ${ALIAS} -s user \\\n  ${flags} \\\n  -- ${stdioShell(env)}`) });
       } else {
         blocks.push({ lbl:"2 · register the URL", code:true, html: hlShell(
           `claude mcp add --transport http ${ALIAS} ${state.hosturl || "http://localhost:8000/mcp"}`) });
@@ -507,7 +543,7 @@
     }
     else if (state.client === "vscode") {
       const server = state.transport === "stdio"
-        ? { type:"stdio", ...stdioCmd(), env:Object.fromEntries(env) }
+        ? { type:"stdio", ...stdioCmd(env), env:Object.fromEntries(env) }
         : { type:"http", url:state.hosturl || "http://localhost:8000/mcp" };
       blocks.push({ lbl:c.file, code:true, json:true, html: hlJson({ servers:{ [ALIAS]:server } }) });
     }
@@ -516,7 +552,7 @@
     }
     else { // claude-desktop, cursor, gemini  → mcpServers JSON
       const server = state.transport === "stdio"
-        ? { ...stdioCmd(), env:Object.fromEntries(env) }
+        ? { ...stdioCmd(env), env:Object.fromEntries(env) }
         : { url:state.hosturl || "http://localhost:8000/mcp" };
       const key = state.transport === "stdio" ? "mcpServers"
                 : (state.client === "gemini" ? "mcpServers" : "mcpServers");
@@ -549,6 +585,7 @@
     if (state.client === "gemini") n.push(`Merge into <code>~/.gemini/settings.json</code>, then restart the Gemini CLI. Verify with <code>/mcp</code>.`);
     if (state.client === "chatgpt") n.push(`<span class="warn">ChatGPT connectors are remote-only.</span> Run the HTTP server on a host ChatGPT can reach (public HTTPS via a reverse proxy or tunnel), then add the URL under Settings → Connectors in developer mode.`);
 
+    if (state.method === "docker" && /localhost|127\.0\.0\.1/.test(state.url)) n.push(`<span class="warn">Docker can't reach <code>localhost</code> on your machine.</span> If Mealie runs on this host, use <code>http://host.docker.internal:9925</code> (macOS/Windows) or your host's LAN IP (Linux) as the Mealie base URL.`);
     if (state.transport === "http") n.push(`Keep the server process running — the client connects to it over HTTP at <code>${esc(state.hosturl||"http://localhost:8000/mcp")}</code>.`);
     if (state.auth === "token") n.push(state.token ? `Token embedded above.` : `No token entered yet — the placeholder <code>YOUR_API_TOKEN</code> is shown. Paste yours to bake it in.`);
     else n.push(`Server logs in with these credentials at startup to fetch a token. An API token is preferred for anything long-lived.`);
@@ -585,15 +622,19 @@
     });
 
     $("#notes").innerHTML = genNotes();
-    renderClone();
+    renderInstall();
     renderDocker();
   }
 
-  function renderClone() {
-    const code = "git clone https://github.com/djwmarcx/better-mealie-mcp\ncd better-mealie-mcp\nuv sync";
-    $("#cloneCode").innerHTML = hlShell(code);
-    const btn = document.querySelector('[data-copy="clone"]');
-    if (btn && !btn._bound) { btn._bound = true; btn.addEventListener("click", () => copyText(code, btn)); }
+  function renderInstall() {
+    const code = state.method === "docker"
+      ? `docker pull ${IMAGE}`
+      : "git clone https://github.com/djwmarcx/better-mealie-mcp\ncd better-mealie-mcp\nuv sync";
+    const pre = $("#installCode");
+    pre.innerHTML = hlShell(code);
+    pre.dataset.raw = code;
+    const btn = document.querySelector('[data-copy="install"]');
+    if (btn && !btn._bound) { btn._bound = true; btn.addEventListener("click", () => copyText(pre.dataset.raw, btn)); }
   }
 
   function renderDocker() {
@@ -620,7 +661,7 @@
     }
   }
 
-  syncClient(); syncAuth(); render();
+  syncClient(); syncMethod(); syncAuth(); render();
 })();
 </script>
 
