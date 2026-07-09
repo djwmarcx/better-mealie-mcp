@@ -60,14 +60,32 @@ def build_names(spec: dict) -> dict[str, str]:
     return names
 
 
-def sanitize(node):
-    """Normalize Mealie's non-standard `format: uuid4` -> standard `uuid`."""
+_ISO_DT = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z?$")
+
+
+def normalize(node):
+    """Canonicalize the spec in place so it diffs only on real API changes.
+
+    Two fixes:
+    - `format: uuid4` (non-standard) -> `uuid`, silencing validator warnings.
+    - Drop `default` values that are ISO-8601 datetimes: Mealie stamps the
+      server's *current time* into a couple of schema defaults
+      (RecipeTimelineEventIn/Out.timestamp), which would otherwise churn the
+      vendored spec on every fetch.
+    """
     if isinstance(node, dict):
         if node.get("format") == "uuid4":
             node["format"] = "uuid"
+        dv = node.get("default")
+        if isinstance(dv, str) and _ISO_DT.match(dv):
+            node.pop("default", None)
         for v in node.values():
-            sanitize(v)
+            normalize(v)
     elif isinstance(node, list):
         for v in node:
-            sanitize(v)
+            normalize(v)
     return node
+
+
+# Backwards-compatible alias.
+sanitize = normalize

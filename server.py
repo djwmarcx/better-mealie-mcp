@@ -31,7 +31,7 @@ from dotenv import load_dotenv
 from fastmcp import FastMCP
 from fastmcp.server.providers.openapi import MCPType, RouteMap
 
-from naming import build_names, sanitize
+from naming import build_names, normalize
 
 load_dotenv()  # pick up a local .env if present
 
@@ -65,7 +65,7 @@ def _get_token() -> str:
 
 
 def build_server() -> FastMCP:
-    spec = sanitize(json.loads(SPEC_PATH.read_text()))
+    spec = normalize(json.loads(SPEC_PATH.read_text()))
     token = _get_token()
 
     client = httpx.AsyncClient(

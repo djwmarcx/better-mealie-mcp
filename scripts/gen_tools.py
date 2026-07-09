@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from naming import build_names  # noqa: E402
+from naming import build_names, normalize  # noqa: E402
 
 SPEC = ROOT / "openapi.json"
 TOOLS = ROOT / "TOOLS.md"
@@ -66,7 +66,14 @@ def old_count() -> int | None:
 
 
 def main() -> int:
-    spec = json.loads(SPEC.read_text())
+    # Canonicalize the vendored spec first: normalize non-standard formats and
+    # drop volatile (server-clock) defaults, then rewrite it pretty-printed so
+    # the file diffs only on real API changes.
+    spec = normalize(json.loads(SPEC.read_text()))
+    with SPEC.open("w") as f:
+        json.dump(spec, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+
     names = build_names(spec)
     prev = old_count()
     text, total = render_tools(spec, names)

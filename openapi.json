@@ -414,7 +414,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Recipe Id"
             }
           },
@@ -598,7 +598,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -771,7 +771,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Id"
             }
           },
@@ -975,7 +975,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Id"
             }
           },
@@ -1040,7 +1040,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Id"
             }
           },
@@ -1105,7 +1105,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Id"
             }
           },
@@ -1187,7 +1187,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Id"
             }
           },
@@ -1257,7 +1257,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Id"
             }
           },
@@ -1613,7 +1613,7 @@
               "anyOf": [
                 {
                   "type": "string",
-                  "format": "uuid4"
+                  "format": "uuid"
                 },
                 {
                   "type": "string"
@@ -2028,7 +2028,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -2091,7 +2091,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -2164,7 +2164,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -2222,7 +2222,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -2491,7 +2491,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -2554,7 +2554,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -2627,7 +2627,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -2692,7 +2692,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -3679,7 +3679,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -3742,7 +3742,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -3815,7 +3815,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -3880,7 +3880,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -3959,7 +3959,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -4039,7 +4039,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -4049,7 +4049,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Recipe Id"
             }
           },
@@ -4131,7 +4131,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -4141,7 +4141,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Recipe Id"
             }
           },
@@ -4501,7 +4501,7 @@
               "type": "array",
               "items": {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               "title": "Ids"
             }
@@ -4636,7 +4636,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -4699,7 +4699,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -4772,7 +4772,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -5102,7 +5102,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -5165,7 +5165,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -5238,7 +5238,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -5303,7 +5303,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -5577,7 +5577,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -5640,7 +5640,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -5713,7 +5713,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -6405,7 +6405,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Provider Id"
             }
           },
@@ -6468,7 +6468,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Provider Id"
             }
           },
@@ -6541,7 +6541,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Provider Id"
             }
           },
@@ -7147,7 +7147,7 @@
                 },
                 {
                   "type": "string",
-                  "format": "uuid4"
+                  "format": "uuid"
                 }
               ],
               "title": "Username Or Id"
@@ -7527,7 +7527,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -7590,7 +7590,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -7880,7 +7880,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -7943,7 +7943,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -8016,7 +8016,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -8960,7 +8960,7 @@
                     "anyOf": [
                       {
                         "type": "string",
-                        "format": "uuid4"
+                        "format": "uuid"
                       },
                       {
                         "type": "string"
@@ -8987,7 +8987,7 @@
                     "anyOf": [
                       {
                         "type": "string",
-                        "format": "uuid4"
+                        "format": "uuid"
                       },
                       {
                         "type": "string"
@@ -9014,7 +9014,7 @@
                     "anyOf": [
                       {
                         "type": "string",
-                        "format": "uuid4"
+                        "format": "uuid"
                       },
                       {
                         "type": "string"
@@ -9041,7 +9041,7 @@
                     "anyOf": [
                       {
                         "type": "string",
-                        "format": "uuid4"
+                        "format": "uuid"
                       },
                       {
                         "type": "string"
@@ -9068,7 +9068,7 @@
                     "anyOf": [
                       {
                         "type": "string",
-                        "format": "uuid4"
+                        "format": "uuid"
                       },
                       {
                         "type": "string"
@@ -9184,7 +9184,7 @@
               "anyOf": [
                 {
                   "type": "string",
-                  "format": "uuid4"
+                  "format": "uuid"
                 },
                 {
                   "type": "string"
@@ -9508,7 +9508,7 @@
                   "type": "array",
                   "items": {
                     "type": "string",
-                    "format": "uuid4"
+                    "format": "uuid"
                   }
                 },
                 {
@@ -9528,7 +9528,7 @@
                   "type": "array",
                   "items": {
                     "type": "string",
-                    "format": "uuid4"
+                    "format": "uuid"
                   }
                 },
                 {
@@ -10847,7 +10847,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Export Id"
             }
           },
@@ -10959,7 +10959,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Token Id"
             }
           }
@@ -11003,7 +11003,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Token Id"
             }
           }
@@ -11253,7 +11253,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -11315,7 +11315,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -11387,7 +11387,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -11451,7 +11451,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -11814,7 +11814,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -11878,7 +11878,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -11952,7 +11952,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -12360,7 +12360,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -12424,7 +12424,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -12498,7 +12498,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -12852,7 +12852,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -12915,7 +12915,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -12988,7 +12988,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -13119,7 +13119,7 @@
               "anyOf": [
                 {
                   "type": "string",
-                  "format": "uuid4"
+                  "format": "uuid"
                 },
                 {
                   "type": "null"
@@ -13256,7 +13256,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -13319,7 +13319,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -13593,7 +13593,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -13656,7 +13656,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -13729,7 +13729,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -14218,7 +14218,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -14281,7 +14281,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -14354,7 +14354,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -14711,7 +14711,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -14774,7 +14774,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -14847,7 +14847,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -15347,7 +15347,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -15409,7 +15409,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -15481,7 +15481,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -15819,7 +15819,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -15881,7 +15881,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -15953,7 +15953,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -16226,7 +16226,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -16288,7 +16288,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -16360,7 +16360,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -16424,7 +16424,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Group Id"
             }
           },
@@ -16498,7 +16498,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Group Id"
             }
           },
@@ -16508,7 +16508,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Provider Id"
             }
           },
@@ -16570,7 +16570,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Group Id"
             }
           },
@@ -16580,7 +16580,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Provider Id"
             }
           },
@@ -16652,7 +16652,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Group Id"
             }
           },
@@ -16662,7 +16662,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Provider Id"
             }
           },
@@ -17475,7 +17475,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Provider Id"
             }
           },
@@ -17710,7 +17710,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -18163,7 +18163,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -18398,7 +18398,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -18633,7 +18633,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Item Id"
             }
           },
@@ -18870,7 +18870,7 @@
               "anyOf": [
                 {
                   "type": "string",
-                  "format": "uuid4"
+                  "format": "uuid"
                 },
                 {
                   "type": "string"
@@ -18958,7 +18958,7 @@
                     "anyOf": [
                       {
                         "type": "string",
-                        "format": "uuid4"
+                        "format": "uuid"
                       },
                       {
                         "type": "string"
@@ -18985,7 +18985,7 @@
                     "anyOf": [
                       {
                         "type": "string",
-                        "format": "uuid4"
+                        "format": "uuid"
                       },
                       {
                         "type": "string"
@@ -19012,7 +19012,7 @@
                     "anyOf": [
                       {
                         "type": "string",
-                        "format": "uuid4"
+                        "format": "uuid"
                       },
                       {
                         "type": "string"
@@ -19039,7 +19039,7 @@
                     "anyOf": [
                       {
                         "type": "string",
-                        "format": "uuid4"
+                        "format": "uuid"
                       },
                       {
                         "type": "string"
@@ -19066,7 +19066,7 @@
                     "anyOf": [
                       {
                         "type": "string",
-                        "format": "uuid4"
+                        "format": "uuid"
                       },
                       {
                         "type": "string"
@@ -19182,7 +19182,7 @@
               "anyOf": [
                 {
                   "type": "string",
-                  "format": "uuid4"
+                  "format": "uuid"
                 },
                 {
                   "type": "string"
@@ -19318,7 +19318,7 @@
                   "type": "array",
                   "items": {
                     "type": "string",
-                    "format": "uuid4"
+                    "format": "uuid"
                   }
                 },
                 {
@@ -19338,7 +19338,7 @@
                   "type": "array",
                   "items": {
                     "type": "string",
-                    "format": "uuid4"
+                    "format": "uuid"
                   }
                 },
                 {
@@ -19594,7 +19594,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Recipe Id"
             }
           },
@@ -19644,7 +19644,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Recipe Id"
             }
           },
@@ -19654,7 +19654,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Timeline Event Id"
             }
           },
@@ -19704,7 +19704,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "Recipe Id"
             }
           },
@@ -19755,7 +19755,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "format": "uuid4",
+              "format": "uuid",
               "title": "User Id"
             }
           },
@@ -19950,7 +19950,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           }
         },
@@ -19968,7 +19968,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -19980,7 +19980,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -19992,7 +19992,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -20041,7 +20041,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -20053,7 +20053,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -20065,7 +20065,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -20086,7 +20086,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "name": {
@@ -20837,14 +20837,14 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "groupId": {
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -20886,12 +20886,12 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "slug": {
@@ -20912,7 +20912,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "slug": {
@@ -21046,7 +21046,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "name": {
@@ -21133,7 +21133,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -21178,7 +21178,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -21228,7 +21228,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -21856,7 +21856,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "name": {
@@ -21909,12 +21909,12 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "name": {
@@ -22256,7 +22256,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           }
         },
@@ -22270,7 +22270,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "name": {
@@ -22283,12 +22283,12 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           },
           "options": {
@@ -22330,12 +22330,12 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           },
           "options": {
@@ -22372,7 +22372,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           }
         },
@@ -22447,7 +22447,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "name": {
@@ -22470,7 +22470,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "slug": {
@@ -22630,17 +22630,17 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           }
         },
@@ -22757,7 +22757,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "slug": {
@@ -22812,7 +22812,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -22836,7 +22836,7 @@
         "properties": {
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "name": {
@@ -22846,7 +22846,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "slug": {
@@ -22974,7 +22974,7 @@
           },
           "recipeId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Recipeid"
           }
         },
@@ -23021,7 +23021,7 @@
         "properties": {
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "name": {
@@ -23031,7 +23031,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "slug": {
@@ -23062,7 +23062,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "fullName": {
@@ -23162,7 +23162,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "name": {
@@ -23202,7 +23202,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -23272,7 +23272,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "name": {
@@ -23312,7 +23312,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -23455,7 +23455,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -23489,7 +23489,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "name": {
@@ -23618,7 +23618,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "name": {
@@ -23986,12 +23986,12 @@
         "properties": {
           "fromFood": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Fromfood"
           },
           "toFood": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Tofood"
           }
         },
@@ -24006,12 +24006,12 @@
         "properties": {
           "fromUnit": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Fromunit"
           },
           "toUnit": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Tounit"
           }
         },
@@ -24053,12 +24053,12 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           }
         },
@@ -24141,12 +24141,12 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           }
         },
@@ -24171,12 +24171,12 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           }
         },
@@ -25014,17 +25014,17 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "queryFilter": {
@@ -25244,17 +25244,17 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "queryFilter": {
@@ -25299,7 +25299,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           }
         },
@@ -25359,7 +25359,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           }
         },
@@ -25500,17 +25500,17 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           }
         },
@@ -25529,7 +25529,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -25539,17 +25539,17 @@
           },
           "userId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Userid"
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "name": {
@@ -25885,7 +25885,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -25895,17 +25895,17 @@
           },
           "userId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Userid"
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "name": {
@@ -26270,7 +26270,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -26282,7 +26282,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -26368,7 +26368,7 @@
         "properties": {
           "recipeId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Recipeid"
           },
           "text": {
@@ -26387,7 +26387,7 @@
         "properties": {
           "recipeId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Recipeid"
           },
           "text": {
@@ -26396,7 +26396,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "createdAt": {
@@ -26411,7 +26411,7 @@
           },
           "userId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Userid"
           },
           "user": {
@@ -26434,7 +26434,7 @@
         "properties": {
           "recipeId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Recipeid"
           },
           "text": {
@@ -26443,7 +26443,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "createdAt": {
@@ -26458,7 +26458,7 @@
           },
           "userId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Userid"
           },
           "user": {
@@ -26539,7 +26539,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "text": {
@@ -26843,7 +26843,7 @@
         "properties": {
           "recipeId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Recipeid"
           },
           "expiresAt": {
@@ -26853,12 +26853,12 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "createdAt": {
@@ -26884,7 +26884,7 @@
         "properties": {
           "recipeId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Recipeid"
           },
           "expiresAt": {
@@ -26903,7 +26903,7 @@
         "properties": {
           "recipeId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Recipeid"
           },
           "expiresAt": {
@@ -26913,12 +26913,12 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "createdAt": {
@@ -27043,7 +27043,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -27053,17 +27053,17 @@
           },
           "userId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Userid"
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "name": {
@@ -27298,7 +27298,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -27310,7 +27310,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -27400,14 +27400,14 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "groupId": {
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -27440,14 +27440,14 @@
         "properties": {
           "recipeId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Recipeid"
           },
           "userId": {
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -27487,8 +27487,7 @@
           "timestamp": {
             "type": "string",
             "format": "date-time",
-            "title": "Timestamp",
-            "default": "2026-07-09T14:20:06.488938Z"
+            "title": "Timestamp"
           }
         },
         "type": "object",
@@ -27503,12 +27502,12 @@
         "properties": {
           "recipeId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Recipeid"
           },
           "userId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Userid"
           },
           "subject": {
@@ -27543,22 +27542,21 @@
           "timestamp": {
             "type": "string",
             "format": "date-time",
-            "title": "Timestamp",
-            "default": "2026-07-09T14:20:06.488938Z"
+            "title": "Timestamp"
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           },
           "createdAt": {
@@ -27682,14 +27680,14 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "groupId": {
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -27759,12 +27757,12 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "slug": {
@@ -27855,12 +27853,12 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "slug": {
@@ -27933,7 +27931,7 @@
         "properties": {
           "reportId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Reportid"
           },
           "timestamp": {
@@ -27957,7 +27955,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           }
         },
@@ -27981,7 +27979,7 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "name": {
@@ -27994,7 +27992,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "entries": {
@@ -28027,7 +28025,7 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "name": {
@@ -28040,7 +28038,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           }
         },
@@ -28106,12 +28104,12 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           }
         },
@@ -28222,7 +28220,7 @@
         "properties": {
           "userId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Userid"
           },
           "canManageHousehold": {
@@ -28300,7 +28298,7 @@
           },
           "recipeId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Recipeid"
           }
         },
@@ -28428,7 +28426,7 @@
           },
           "shoppingListId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Shoppinglistid"
           },
           "checked": {
@@ -28445,7 +28443,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -28457,7 +28455,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -28469,7 +28467,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -28494,7 +28492,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -28573,7 +28571,7 @@
           },
           "shoppingListId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Shoppinglistid"
           },
           "checked": {
@@ -28590,7 +28588,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -28602,7 +28600,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -28614,7 +28612,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -28637,17 +28635,17 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           },
           "label": {
@@ -28758,7 +28756,7 @@
           },
           "shoppingListId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Shoppinglistid"
           },
           "checked": {
@@ -28775,7 +28773,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -28787,7 +28785,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -28799,7 +28797,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -28822,17 +28820,17 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           },
           "label": {
@@ -28949,7 +28947,7 @@
         "properties": {
           "recipeId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Recipeid"
           },
           "recipeQuantity": {
@@ -28991,7 +28989,7 @@
         "properties": {
           "recipeId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Recipeid"
           },
           "recipeQuantity": {
@@ -29024,12 +29022,12 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "shoppingListItemId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Shoppinglistitemid"
           }
         },
@@ -29045,7 +29043,7 @@
         "properties": {
           "recipeId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Recipeid"
           },
           "recipeQuantity": {
@@ -29078,12 +29076,12 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "shoppingListItemId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Shoppinglistitemid"
           }
         },
@@ -29159,7 +29157,7 @@
           },
           "shoppingListId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Shoppinglistid"
           },
           "checked": {
@@ -29176,7 +29174,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -29188,7 +29186,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -29200,7 +29198,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -29307,7 +29305,7 @@
           },
           "shoppingListId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Shoppinglistid"
           },
           "checked": {
@@ -29324,7 +29322,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -29336,7 +29334,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -29348,7 +29346,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -29386,7 +29384,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           }
         },
@@ -29433,12 +29431,12 @@
         "properties": {
           "shoppingListId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Shoppinglistid"
           },
           "labelId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Labelid"
           },
           "position": {
@@ -29448,7 +29446,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "label": {
@@ -29468,12 +29466,12 @@
         "properties": {
           "shoppingListId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Shoppinglistid"
           },
           "labelId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Labelid"
           },
           "position": {
@@ -29483,7 +29481,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           }
         },
@@ -29547,17 +29545,17 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "userId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Userid"
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "listItems": {
@@ -29570,7 +29568,7 @@
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           },
           "recipeReferences": {
@@ -29661,17 +29659,17 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "shoppingListId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Shoppinglistid"
           },
           "recipeId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Recipeid"
           },
           "recipeQuantity": {
@@ -29755,22 +29753,22 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "userId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Userid"
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           },
           "recipeReferences": {
@@ -29851,17 +29849,17 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "userId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Userid"
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "listItems": {
@@ -29923,14 +29921,14 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "groupId": {
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -29972,12 +29970,12 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "slug": {
@@ -30061,17 +30059,17 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           }
         },
@@ -30104,7 +30102,7 @@
         "properties": {
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "name": {
@@ -30114,7 +30112,7 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "preferences": {
@@ -30261,7 +30259,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "username": {
@@ -30304,7 +30302,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"
@@ -30422,7 +30420,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "username": {
@@ -30511,7 +30509,7 @@
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "groupSlug": {
@@ -30520,7 +30518,7 @@
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           },
           "householdSlug": {
@@ -30630,7 +30628,7 @@
         "properties": {
           "recipeId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Recipeid"
           },
           "rating": {
@@ -30651,12 +30649,12 @@
           },
           "userId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Userid"
           },
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           }
         },
@@ -30672,7 +30670,7 @@
         "properties": {
           "recipeId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Recipeid"
           },
           "rating": {
@@ -30762,17 +30760,17 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "groupId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Groupid"
           },
           "householdId": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Householdid"
           },
           "username": {
@@ -30903,7 +30901,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid4",
+            "format": "uuid",
             "title": "Id"
           },
           "username": {
@@ -30946,7 +30944,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "format": "uuid4"
+                "format": "uuid"
               },
               {
                 "type": "null"

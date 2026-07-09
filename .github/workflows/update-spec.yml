@@ -23,18 +23,10 @@ jobs:
           python-version: "3.13"
 
       - name: Fetch latest spec from demo.mealie.io (nightly)
-        run: |
-          curl -fsSL https://demo.mealie.io/openapi.json -o /tmp/spec.json
-          python - <<'PY'
-          import json
-          d = json.load(open("/tmp/spec.json"))
-          with open("openapi.json", "w") as f:
-              json.dump(d, f, indent=2, ensure_ascii=False)
-              f.write("\n")
-          PY
+        run: curl -fsSL https://demo.mealie.io/openapi.json -o openapi.json
 
-      - name: Regenerate tool reference and counts
-        run: python scripts/gen_tools.py
+      - name: Canonicalize spec + regenerate tool reference and counts
+        run: python scripts/gen_tools.py   # normalizes + pretty-writes openapi.json
 
       - name: Commit if the spec changed
         run: |
