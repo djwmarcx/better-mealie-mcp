@@ -1,0 +1,30 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+
+  extends: [
+    "config:recommended",
+    // Pin GitHub Actions to an immutable commit SHA, keeping the `# vX.Y.Z`
+    // comment updated — matches how the workflows are pinned in this repo.
+    "helpers:pinGitHubActionDigests",
+    ":dependencyDashboard",
+    ":semanticCommits",
+  ],
+
+  labels: ["dependencies"],
+
+  // Keep the Python deps (fastmcp, httpx, python-dotenv) fresh too.
+  lockFileMaintenance: { enabled: true },
+
+  packageRules: [
+    {
+      // One tidy PR for all Action digest bumps.
+      matchManagers: ["github-actions"],
+      groupName: "github-actions",
+    },
+    {
+      // Group Python dependency bumps.
+      matchManagers: ["pep621"],
+      groupName: "python dependencies",
+    },
+  ],
+}
