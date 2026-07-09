@@ -130,8 +130,12 @@ FastMCP disambiguates the path parameter with a `__path` suffix (`slug__path`).
   filter by tag — ask and it can be wired in.
 - `openapi.json` is a vendored copy of Mealie's **nightly** spec (from
   `demo.mealie.io`). A nightly GitHub Action
-  ([`update-spec.yml`](.github/workflows/update-spec.yml)) re-pulls it, regenerates
-  [TOOLS.md](./TOOLS.md) and the tool counts, and commits only when it changed.
+  ([`update-spec.yml`](.github/workflows/update-spec.yml)) re-pulls it,
+  regenerates [TOOLS.md](./TOOLS.md) and the tool counts, and — **only when the
+  spec actually changed** — commits and cuts a dated
+  [release](https://github.com/djwmarcx/better-mealie-mcp/releases) with the
+  `openapi.json` attached and notes listing added/removed tools. Volatile
+  server-clock defaults are stripped so unchanged nights are true no-ops.
   Refresh manually with `python scripts/gen_tools.py` after
   `curl -o openapi.json https://demo.mealie.io/openapi.json`.
 - A few endpoints (`list_auth_oauth*`) return 500 unless OIDC is configured on

@@ -22,21 +22,36 @@ jobs:
         with:
           python-version: "3.13"
 
+      - name: Snapshot current spec (for diffing)
+        run: cp openapi.json /tmp/old-spec.json
+
       - name: Fetch latest spec from demo.mealie.io (nightly)
         run: curl -fsSL https://demo.mealie.io/openapi.json -o openapi.json
 
       - name: Canonicalize spec + regenerate tool reference and counts
         run: python scripts/gen_tools.py   # normalizes + pretty-writes openapi.json
 
-      - name: Commit if the spec changed
+      - name: Commit + release if the spec changed
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           if git diff --quiet; then
             echo "Spec unchanged — nothing to commit."
             exit 0
           fi
+
           VER="$(python -c "import json;print(json.load(open('openapi.json'))['info']['version'])")"
+          python scripts/spec_diff.py /tmp/old-spec.json openapi.json > /tmp/notes.md
+          echo "----- release notes -----"; cat /tmp/notes.md
+
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           git commit -m "chore: sync Mealie OpenAPI spec (${VER})"
           git push
+
+          TAG="spec-$(date -u +%Y%m%d-%H%M)"
+          gh release create "$TAG" openapi.json \
+            --title "Mealie spec ${VER} — $(date -u +%Y-%m-%d)" \
+            --notes-file /tmp/notes.md \
+            --target "$(git rev-parse HEAD)"
