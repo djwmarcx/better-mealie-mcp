@@ -128,7 +128,11 @@ FastMCP disambiguates the path parameter with a `__path` suffix (`slug__path`).
 - **259 tools is a lot of idle context.** Most clients handle it, but if yours
   caps tool counts or you want a leaner context, use FastMCP's tool-search or
   filter by tag — ask and it can be wired in.
-- `openapi.json` is a vendored copy of Mealie's spec (v3.20.1). Refresh with
+- `openapi.json` is a vendored copy of Mealie's **nightly** spec (from
+  `demo.mealie.io`). A nightly GitHub Action
+  ([`update-spec.yml`](.github/workflows/update-spec.yml)) re-pulls it, regenerates
+  [TOOLS.md](./TOOLS.md) and the tool counts, and commits only when it changed.
+  Refresh manually with `python scripts/gen_tools.py` after
   `curl -o openapi.json https://demo.mealie.io/openapi.json`.
 - A few endpoints (`list_auth_oauth*`) return 500 unless OIDC is configured on
   the Mealie side — that's Mealie behavior, not the server.
