@@ -1,7 +1,7 @@
 [project]
 name = "better-mealie-mcp"
 version = "3.20.1"   # mirrors the targeted Mealie version (see MEALIE_VERSION)
-description = "MCP server exposing every Mealie API endpoint (259 tools) via FastMCP"
+description = "MCP server exposing every Mealie API endpoint via FastMCP"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [

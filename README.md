@@ -16,7 +16,7 @@
 </p>
 
 <em>An MCP server exposing <strong>every</strong> <a href="https://mealie.io">Mealie</a> API endpoint —<br>
-all 259 operations, none excluded. Manage recipes, meal plans, shopping lists,<br>
+all 250+ operations, none excluded. Manage recipes, meal plans, shopping lists,<br>
 households and more from any AI assistant, in natural language.</em>
 
 </div>
@@ -131,7 +131,7 @@ FastMCP disambiguates the path parameter with a `__path` suffix (`slug__path`).
 
 ## 📝 Notes
 
-- **259 tools is a lot of idle context.** Most clients handle it, but if yours
+- **Exposing every endpoint is a lot of tools — a lot of idle context.** Most clients handle it, but if yours
   caps tool counts or you want a leaner context, use FastMCP's tool-search or
   filter by tag — ask and it can be wired in.
 ### Versioning
