@@ -58,10 +58,6 @@ ready-to-paste config for **your** client:
 4. **Copy & run** — syntax-highlighted config with one-click copy, plus
    per-client notes. A Docker one-liner is there if you don't have Mealie yet.
 
-It's a single static page ([`setup-wizard.html`](./setup-wizard.html)),
-auto-deployed to GitHub Pages on every change. Prefer to do it by hand? The same
-steps are written out below.
-
 ## 🚀 Setup
 
 **Docker (GHCR image):**
@@ -111,33 +107,6 @@ fastmcp run fastmcp-http.json        # via FastMCP project config (http)
 In `--http` mode the bind address comes from `MCP_HOST` (default `127.0.0.1`;
 the Docker image sets `0.0.0.0` so `-p` port mapping works).
 
-## 🔌 Use with Claude
-
-Claude Code CLI:
-
-```bash
-claude mcp add better-mealie-mcp -s user \
-  -e MEALIE_BASE_URL=http://localhost:9925 -e MEALIE_API_TOKEN=... \
-  -- uv run --directory /path/to/better-mealie-mcp server.py
-```
-
-Claude Desktop (`claude_desktop_config.json`):
-
-```json
-{
-  "mcpServers": {
-    "better-mealie-mcp": {
-      "command": "uv",
-      "args": ["run", "--directory", "/path/to/better-mealie-mcp", "server.py"],
-      "env": {
-        "MEALIE_BASE_URL": "http://localhost:9925",
-        "MEALIE_API_TOKEN": "your-token-here"
-      }
-    }
-  }
-}
-```
-
 ## 🧪 Test against a local Mealie (Docker)
 
 ```bash
@@ -147,23 +116,6 @@ docker run -d --name mealie -p 9925:9000 \
 ```
 
 Default admin login: `changeme@example.com` / `MyPassword`.
-
-## 🏷️ Tool naming
-
-Mealie's `operationId`s bury the semantics in a path echo
-(`create_one_api_recipes_post`), so names are derived from **HTTP method + path**
-instead — descriptive and collision-free:
-
-| Endpoint | Tool |
-|----------|------|
-| `GET /api/recipes` | `list_recipes` |
-| `POST /api/recipes` | `create_recipes` |
-| `GET /api/recipes/{slug}` | `get_recipes_by_slug` |
-| `PUT /api/recipes/{slug}` | `update_recipes_by_slug` |
-| `DELETE /api/recipes/{slug}` | `delete_recipes_by_slug` |
-
-When a path parameter name also appears in the request body (e.g. `slug`),
-FastMCP disambiguates the path parameter with a `__path` suffix (`slug__path`).
 
 ## 📝 Notes
 
