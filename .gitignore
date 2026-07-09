@@ -11,6 +11,3 @@ wheels/
 
 # Secrets
 .env
-
-# Generated local build of the setup wizard (see setup-wizard.html)
-setup-wizard.local.html

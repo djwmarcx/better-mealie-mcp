@@ -19,17 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-      - name: Wrap the wizard into a standalone index.html
+      - name: Assemble the site
         run: |
           mkdir -p _site
-          {
-            printf '%s\n' '<!doctype html>' '<html lang="en">' '<head>' \
-              '<meta charset="utf-8">' \
-              '<meta name="viewport" content="width=device-width, initial-scale=1">' \
-              '</head>' '<body>'
-            cat setup-wizard.html
-            printf '%s\n' '</body>' '</html>'
-          } > _site/index.html
+          cp setup-wizard.html _site/index.html   # standalone document, served as-is
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: _site
