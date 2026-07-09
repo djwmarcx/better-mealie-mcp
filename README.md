@@ -46,17 +46,11 @@ tool list.
 
 </h3>
 
-Don't hand-write JSON. The wizard walks you through it and generates a
-ready-to-paste config for **your** client:
-
-1. **Get the code** — clone + `uv sync`, copied for you.
-2. **Pick your client** — Claude Code, Claude Desktop, Cursor, VS Code,
-   Gemini CLI, or ChatGPT. It knows each one's config shape (`mcpServers` vs
-   VS Code's `servers`, the `claude mcp add` command, etc.).
-3. **Connection** — stdio or HTTP, API token or username/password. Fields adapt
-   to what you pick; the command to start an HTTP server appears when needed.
-4. **Copy & run** — syntax-highlighted config with one-click copy, plus
-   per-client notes. A Docker one-liner is there if you don't have Mealie yet.
+<p align="center">
+  <a href="https://djwmarcx.github.io/better-mealie-mcp/">
+    <img src="public/options-tree.png" alt="Setup options — Install, Client, Transport, Auth" width="900">
+  </a>
+</p>
 
 ## 🚀 Setup
 
