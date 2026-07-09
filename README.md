@@ -40,13 +40,27 @@ tool list.
 
 ## 🧙 Setup Wizard
 
-Generate the exact config for your AI client (Claude Code, Claude Desktop,
-Cursor, VS Code, ChatGPT, Gemini CLI, …) with the interactive wizard:
+<h3 align="center">
 
-> **→ [Open the Setup Wizard](https://djwmarcx.github.io/better-mealie-mcp/)**
-> (source: [`setup-wizard.html`](./setup-wizard.html), deployed to GitHub Pages)
+[**→ Open the Setup Wizard**](https://djwmarcx.github.io/better-mealie-mcp/)
 
-Or set it up manually below.
+</h3>
+
+Don't hand-write JSON. The wizard walks you through it and generates a
+ready-to-paste config for **your** client:
+
+1. **Get the code** — clone + `uv sync`, copied for you.
+2. **Pick your client** — Claude Code, Claude Desktop, Cursor, VS Code,
+   Gemini CLI, or ChatGPT. It knows each one's config shape (`mcpServers` vs
+   VS Code's `servers`, the `claude mcp add` command, etc.).
+3. **Connection** — stdio or HTTP, API token or username/password. Fields adapt
+   to what you pick; the command to start an HTTP server appears when needed.
+4. **Copy & run** — syntax-highlighted config with one-click copy, plus
+   per-client notes. A Docker one-liner is there if you don't have Mealie yet.
+
+It's a single static page ([`setup-wizard.html`](./setup-wizard.html)),
+auto-deployed to GitHub Pages on every change. Prefer to do it by hand? The same
+steps are written out below.
 
 ## 🚀 Setup
 

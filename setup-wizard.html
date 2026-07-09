@@ -42,6 +42,9 @@
   }
 
   * { box-sizing:border-box; }
+  /* Author `display` on .row/.seg would otherwise override the UA [hidden]
+     rule, so the JS toggles (syncAuth / syncTransport) had no visible effect. */
+  [hidden] { display:none !important; }
   body {
     margin:0; background:var(--paper); color:var(--ink);
     font-family:var(--ui); line-height:1.55;
@@ -186,8 +189,37 @@
 
   footer { margin-top:40px; padding-top:20px; border-top:1px solid var(--line); color:var(--faint); font-size:.8rem; display:flex; gap:14px; flex-wrap:wrap; align-items:center; }
   footer b { color:var(--basil); font-weight:600; }
+  footer .credit { margin-left:auto; display:inline-flex; align-items:center; gap:9px; }
+  footer .credit .heart { color:#e0565f; display:inline-flex; }
+  footer .credit .heart svg { width:13px; height:13px; }
+  footer .credit .icons { display:inline-flex; align-items:center; gap:11px; }
+  footer .credit .icons a { color:var(--muted); display:inline-flex; transition:color .15s, transform .1s; }
+  footer .credit .icons a:hover { color:var(--basil); transform:translateY(-1px); }
+  footer .credit .icons a:focus-visible { outline:2px solid var(--basil-2); outline-offset:3px; border-radius:3px; }
+  footer .credit .icons svg { width:16px; height:16px; }
 
   @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } details.docker summary .chev{ transition:none; } }
+
+  /* ---- prerequisite step ---- */
+  .prereq { margin:2px 0 30px; }
+  .prereq .codewrap { border-radius:var(--radius-sm); border:1px solid var(--code-line); }
+  .step .hint a { color:var(--basil); text-decoration:none; border-bottom:1px solid color-mix(in oklab,var(--basil) 35%,transparent); }
+  .step .hint a:hover { color:var(--basil-2); }
+
+  /* ---- scrollbars (theme-aware) ---- */
+  * { scrollbar-width:thin; scrollbar-color:color-mix(in oklab,var(--faint) 55%,transparent) transparent; }
+  ::-webkit-scrollbar { width:11px; height:11px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb {
+    background:color-mix(in oklab,var(--faint) 55%,transparent);
+    border-radius:9px; border:3px solid transparent; background-clip:padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover { background:var(--basil); background-clip:padding-box; border:3px solid transparent; }
+  ::-webkit-scrollbar-corner { background:transparent; }
+  /* code blocks stay dark in both themes → give them a matching track/thumb */
+  .codewrap pre { scrollbar-color:color-mix(in oklab,var(--code-punc) 70%,transparent) transparent; }
+  .codewrap pre::-webkit-scrollbar-thumb { background:color-mix(in oklab,var(--code-punc) 70%,transparent); background-clip:padding-box; border:3px solid transparent; }
+  .codewrap pre::-webkit-scrollbar-thumb:hover { background:var(--code-key); background-clip:padding-box; border:3px solid transparent; }
 </style>
 </head>
 <body>
@@ -214,16 +246,24 @@
 
   <hr class="rule">
 
+  <section class="prereq">
+    <div class="step"><span class="n">1</span><h2>Get the code<span class="hint">needs Python 3.14+ and <a href="https://docs.astral.sh/uv/">uv</a></span></h2></div>
+    <div class="codewrap" style="position:relative">
+      <button class="copy" type="button" data-copy="clone"><svg viewBox="0 0 16 16" fill="none"><path d="M5.5 5.5V3.2c0-.4.3-.7.7-.7h6.6c.4 0 .7.3.7.7v6.6c0 .4-.3.7-.7.7h-2.3M2.5 6.9c0-.4.3-.7.7-.7h6.6c.4 0 .7.3.7.7v6.6c0 .4-.3.7-.7.7H3.2a.7.7 0 0 1-.7-.7z" stroke="currentColor" stroke-width="1.3"/></svg><span>Copy</span></button>
+      <pre id="cloneCode"></pre>
+    </div>
+  </section>
+
   <div class="grid">
     <!-- ===== controls ===== -->
     <div>
       <fieldset>
-        <div class="step"><span class="n">1</span><h2>Choose your client<span class="hint">where you talk to Claude</span></h2></div>
+        <div class="step"><span class="n">2</span><h2>Choose your client<span class="hint">where you talk to Claude</span></h2></div>
         <div class="clients" id="clients" role="group" aria-label="AI client"></div>
       </fieldset>
 
       <fieldset>
-        <div class="step"><span class="n">2</span><h2>Connection</h2></div>
+        <div class="step"><span class="n">3</span><h2>Connection</h2></div>
 
         <div class="row">
           <label>Transport <span class="sub">— how the client reaches the server</span></label>
@@ -240,7 +280,7 @@
 
         <div class="row" id="pathRow">
           <label for="path">Path to this repo <span class="sub">— where <code style="font-family:var(--mono)">server.py</code> lives</span></label>
-          <input id="path" type="text" spellcheck="false" value="/Users/marcx/git/better-mealie-mcp" autocomplete="off">
+          <input id="path" type="text" spellcheck="false" value="/path/to/better-mealie-mcp" autocomplete="off">
         </div>
 
         <div class="row" id="hostRow" hidden>
@@ -280,7 +320,7 @@
 
     <!-- ===== output ===== -->
     <div class="out">
-      <div class="step"><span class="n">3</span><h2>Copy &amp; run</h2></div>
+      <div class="step"><span class="n">4</span><h2>Copy &amp; run</h2></div>
       <div class="card">
         <div class="card-h">
           <span class="dot"></span>
@@ -309,6 +349,16 @@
   <footer>
     <span>🍲 <b>Better Mealie MCP</b></span>
     <span>Every endpoint, generated from the OpenAPI spec via FastMCP.</span>
+    <span class="credit">
+      Built with
+      <span class="heart" aria-hidden="true"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 14s-5.5-3.6-5.5-7.3A3 3 0 0 1 8 4.6a3 3 0 0 1 5.5 2.1C13.5 10.4 8 14 8 14z"/></svg></span>
+      by Marcos Pérez
+      <span class="icons">
+        <a href="https://marcx.dev" title="marcx.dev" aria-label="Website"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6.5"/><path d="M1.6 8h12.8M8 1.5c1.9 2 1.9 11 0 13M8 1.5c-1.9 2-1.9 11 0 13"/></svg></a>
+        <a href="https://github.com/djwmarcx" title="GitHub" aria-label="GitHub"><svg viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
+        <a href="https://www.linkedin.com/in/marcx" title="LinkedIn" aria-label="LinkedIn"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z"/></svg></a>
+      </span>
+    </span>
   </footer>
 </div>
 
@@ -333,7 +383,7 @@
     transport:"stdio",
     auth:"token",
     url:"http://localhost:9925",
-    path:"/Users/marcx/git/better-mealie-mcp",
+    path:"/path/to/better-mealie-mcp",
     hosturl:"http://localhost:8000/mcp",
     token:"", user:"", pass:"",
   };
@@ -468,7 +518,7 @@
     // One pass, alternation ordered keyword | flag | assignment. Output is not
     // re-scanned, so highlighting never matches inside its own injected spans.
     return esc(str).replace(
-      /(\b(?:claude|uvx|uv|npx|docker|run)\b)|((?:^|\s)--?[A-Za-z][\w-]*)|(=)([^\s\\]+)/g,
+      /(\b(?:git|claude|uvx|uv|npx|docker|run|cd)\b)|((?:^|\s)--?[A-Za-z][\w-]*)|(=)([^\s\\]+)/g,
       (m, kw, flag, eq, val) => {
         if (kw) return `<span class="tok-key">${kw}</span>`;
         if (flag) return flag.replace(/(--?[A-Za-z][\w-]*)/, '<span class="tok-punc">$1</span>');
@@ -523,7 +573,15 @@
     });
 
     $("#notes").innerHTML = genNotes();
+    renderClone();
     renderDocker();
+  }
+
+  function renderClone() {
+    const code = "git clone https://github.com/djwmarcx/better-mealie-mcp\ncd better-mealie-mcp\nuv sync";
+    $("#cloneCode").innerHTML = hlShell(code);
+    const btn = document.querySelector('[data-copy="clone"]');
+    if (btn && !btn._bound) { btn._bound = true; btn.addEventListener("click", () => copyText(code, btn)); }
   }
 
   function renderDocker() {
