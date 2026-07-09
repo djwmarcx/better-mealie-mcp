@@ -48,12 +48,15 @@ def build_names(spec: dict) -> dict[str, str]:
             oid = op.get("operationId")
             if not oid:
                 continue
-            base = path_name(method, path)[:56]
+            # Truncating to the 56-char MCP name limit can cut mid-word and
+            # leave a trailing "_"; strip it so it matches the name FastMCP
+            # actually registers (and TOOLS.md / the wizard stay accurate).
+            base = path_name(method, path)[:56].rstrip("_")
             candidate = base
             n = 2
             while candidate in seen:
                 suffix = f"_{n}"
-                candidate = base[: 56 - len(suffix)] + suffix
+                candidate = base[: 56 - len(suffix)].rstrip("_") + suffix
                 n += 1
             seen.add(candidate)
             names[oid] = candidate

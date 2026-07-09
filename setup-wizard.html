@@ -237,17 +237,54 @@
   .grouphelp { font-size:.85rem; color:var(--muted); margin:0 0 12px; line-height:1.5; }
   .grouphelp code { font-family:var(--mono); font-size:.82em; background:var(--panel); padding:1px 5px; border-radius:5px; color:var(--ink); }
   .grouphelp b { color:var(--basil); }
-  .groups { display:flex; flex-wrap:wrap; gap:8px; }
-  .gchip {
-    appearance:none; cursor:pointer; font-family:var(--ui); font-size:.84rem; color:var(--ink);
-    background:var(--surface); border:1px solid var(--line); border-radius:999px;
-    padding:7px 13px; display:inline-flex; align-items:center; gap:7px; transition:border-color .15s, background .15s;
+  .infoi { display:inline-grid; place-items:center; width:15px; height:15px; border-radius:50%;
+    border:1px solid var(--faint); color:var(--faint); font-size:.62rem; font-weight:700; font-style:normal;
+    font-family:var(--mono); vertical-align:middle; }
+
+  /* preset packs */
+  .packs { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:12px; }
+  .pack {
+    appearance:none; cursor:pointer; font-family:var(--ui); font-size:.82rem; font-weight:560; color:var(--muted);
+    background:var(--panel); border:1px solid var(--line); border-radius:999px; padding:6px 13px;
+    transition:color .15s, border-color .15s, background .15s;
   }
-  .gchip:hover { border-color:color-mix(in oklab,var(--basil) 45%,var(--line)); }
-  .gchip .gc { font-family:var(--mono); font-size:.74rem; color:var(--faint); }
-  .gchip[aria-pressed="true"] { border-color:var(--basil); background:color-mix(in oklab,var(--basil) 12%,var(--surface)); }
-  .gchip[aria-pressed="true"] .gc { color:var(--basil); }
-  .gchip:focus-visible { outline:2px solid var(--basil-2); outline-offset:2px; }
+  .pack:hover { color:var(--ink); border-color:var(--faint); }
+  .pack[aria-pressed="true"] { color:var(--basil); border-color:var(--basil); background:color-mix(in oklab,var(--basil) 12%,var(--surface)); }
+  .pack:focus-visible { outline:2px solid var(--basil-2); outline-offset:2px; }
+
+  /* group cards */
+  .groups { display:grid; grid-template-columns:1fr; gap:8px; }
+  @media (min-width:560px){ .groups { grid-template-columns:1fr 1fr; } }
+  .grow { position:relative; background:var(--surface); border:1px solid var(--line); border-radius:11px;
+    display:flex; align-items:center; transition:border-color .15s, background .15s; }
+  .grow:hover { border-color:color-mix(in oklab,var(--basil) 45%,var(--line)); }
+  .gsel { appearance:none; cursor:pointer; text-align:left; font-family:var(--ui); color:var(--ink);
+    background:transparent; border:0; flex:1; min-width:0; display:flex; align-items:center; gap:11px; padding:12px 4px 12px 13px; }
+  .gsel .box { flex:none; width:17px; height:17px; border-radius:5px; border:1.5px solid var(--faint);
+    display:grid; place-items:center; transition:background .15s, border-color .15s; }
+  .gsel .box svg { width:11px; height:11px; opacity:0; color:#1d2021; }
+  .gsel .gname { font-weight:600; font-size:.92rem; }
+  .gsel .gc { font-family:var(--mono); font-size:.73rem; color:var(--faint); margin-left:5px; }
+  .ginfo { appearance:none; cursor:pointer; flex:none; background:transparent; border:0; color:var(--faint);
+    width:34px; align-self:stretch; border-left:1px solid var(--line); border-radius:0 11px 11px 0;
+    display:grid; place-items:center; transition:color .15s, background .15s; }
+  .ginfo:hover { color:var(--basil); background:color-mix(in oklab,var(--basil) 8%,transparent); }
+  .ginfo svg { width:16px; height:16px; }
+  .grow[aria-pressed="true"] { border-color:var(--basil); background:color-mix(in oklab,var(--basil) 10%,var(--surface)); }
+  .grow[aria-pressed="true"] .box { background:var(--basil); border-color:var(--basil); }
+  .grow[aria-pressed="true"] .box svg { opacity:1; }
+  .grow[aria-pressed="true"] .gc { color:var(--basil); }
+  .gsel:focus-visible, .ginfo:focus-visible { outline:2px solid var(--basil-2); outline-offset:-2px; }
+
+  /* popover with the full item list */
+  .pop { position:absolute; top:calc(100% + 6px); left:0; z-index:20;
+    min-width:100%; width:max-content; max-width:min(360px, 88vw);
+    background:var(--surface); border:1px solid var(--basil); border-radius:11px;
+    box-shadow:var(--shadow); padding:12px 14px; max-height:240px; overflow-y:auto; }
+  .pop h4 { margin:0 0 8px; font-size:.82rem; color:var(--muted); font-weight:600; }
+  .pop h4 b { color:var(--basil); }
+  .pop ul { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:3px; }
+  .pop li { font-family:var(--mono); font-size:.76rem; color:var(--ink); overflow-wrap:anywhere; }
   .groupsum { font-size:.82rem; color:var(--faint); margin:12px 0 0; min-height:1.2em; }
   .groupsum b { color:var(--basil); }
   .step .hint a { color:var(--basil); text-decoration:none; border-bottom:1px solid color-mix(in oklab,var(--basil) 35%,transparent); }
@@ -381,7 +418,8 @@
 
       <fieldset>
         <div class="step"><span class="n">+</span><h2>Limit tools<span class="hint">optional — leaner context, or fit a client that caps tool counts</span></h2></div>
-        <p class="grouphelp">All <b id="allcount">259</b> endpoints are exposed by default. Pick groups to expose only those (<code>MEALIE_INCLUDE_TAGS</code>):</p>
+        <p class="grouphelp">All <b id="allcount">259</b> endpoints are exposed by default. Start from a pack, or pick groups (<code>MEALIE_INCLUDE_TAGS</code>) — tap <span class="infoi">i</span> to see everything inside a group:</p>
+        <div class="packs" id="packs" role="group" aria-label="Presets"></div>
         <div class="groups" id="toolgroups" role="group" aria-label="Tool groups"></div>
         <p class="groupsum" id="groupsum"></p>
       </fieldset>
@@ -449,7 +487,7 @@
   const IMAGE = "ghcr.io/djwmarcx/better-mealie-mcp";
 
   // Mealie API groups + tool counts — generated from the spec by gen_tools.py.
-  const GROUPS = /*GROUPS_START*/[{"tag":"households","count":64},{"tag":"recipes","count":42},{"tag":"admin","count":38},{"tag":"groups","count":26},{"tag":"organizers","count":20},{"tag":"users","count":17},{"tag":"explore","count":15},{"tag":"foods","count":6},{"tag":"units","count":6},{"tag":"auth","count":5},{"tag":"comments","count":5},{"tag":"media","count":5},{"tag":"shared","count":4},{"tag":"app","count":3},{"tag":"parser","count":2},{"tag":"utils","count":1}]/*GROUPS_END*/;
+  const GROUPS = /*GROUPS_START*/[{"tag":"households","count":64,"subs":["shopping","mealplans","lists","items","webhooks","cookbooks","events","notifications","recipe-actions","rules","invitations","recipe","test","self","preferences","trigger","recipes","members","permissions","statistics","email","label-settings","delete","create-bulk","rerun","today","random"],"tools":["create_households_cookbooks","create_households_events_notifications","create_households_events_notifications_by_item_test","create_households_invitations","create_households_invitations_email","create_households_mealplans","create_households_mealplans_random","create_households_mealplans_rules","create_households_recipe_actions","create_households_recipe_actions_by_item_trigger_by_reci","create_households_shopping_items","create_households_shopping_items_create_bulk","create_households_shopping_lists","create_households_shopping_lists_by_item_recipe","create_households_shopping_lists_by_item_recipe_by_rec_2","create_households_shopping_lists_by_item_recipe_by_recip","create_households_webhooks","create_households_webhooks_by_item_test","create_households_webhooks_rerun","delete_households_cookbooks_by_item","delete_households_events_notifications_by_item","delete_households_mealplans_by_item","delete_households_mealplans_rules_by_item","delete_households_recipe_actions_by_item","delete_households_shopping_items","delete_households_shopping_items_by_item","delete_households_shopping_lists_by_item","delete_households_webhooks_by_item","get_households_cookbooks_by_item","get_households_events_notifications_by_item","get_households_mealplans_by_item","get_households_mealplans_rules_by_item","get_households_recipe_actions_by_item","get_households_self_recipes_by_recipe_slug","get_households_shopping_items_by_item","get_households_shopping_lists_by_item","get_households_webhooks_by_item","list_households_cookbooks","list_households_events_notifications","list_households_invitations","list_households_mealplans","list_households_mealplans_rules","list_households_mealplans_today","list_households_members","list_households_preferences","list_households_recipe_actions","list_households_self","list_households_shopping_items","list_households_shopping_lists","list_households_statistics","list_households_webhooks","update_households_cookbooks","update_households_cookbooks_by_item","update_households_events_notifications_by_item","update_households_mealplans_by_item","update_households_mealplans_rules_by_item","update_households_permissions","update_households_preferences","update_households_recipe_actions_by_item","update_households_shopping_items","update_households_shopping_items_by_item","update_households_shopping_lists_by_item","update_households_shopping_lists_by_item_label_settings","update_households_webhooks_by_item"]},{"tag":"recipes","count":42,"subs":["bulk-actions","create","timeline","events","image","export","url","exports","html-or-json","stream","zip","shared","test-scrape-url","bulk","suggestions","duplicate","last-made","assets","comments","tag","settings","categorize","delete","download","purge"],"tools":["create_recipes","create_recipes_bulk_actions_categorize","create_recipes_bulk_actions_delete","create_recipes_bulk_actions_export","create_recipes_bulk_actions_settings","create_recipes_bulk_actions_tag","create_recipes_by_slug_assets","create_recipes_by_slug_duplicate","create_recipes_by_slug_image","create_recipes_create_html_or_json","create_recipes_create_html_or_json_stream","create_recipes_create_image","create_recipes_create_url","create_recipes_create_url_bulk","create_recipes_create_url_stream","create_recipes_create_zip","create_recipes_test_scrape_url","create_recipes_timeline_events","delete_recipes_bulk_actions_export_purge","delete_recipes_by_slug","delete_recipes_by_slug_image","delete_recipes_timeline_events_by_item","get_recipes_by_slug","get_recipes_shared_by_token","get_recipes_timeline_events_by_item","list_recipes","list_recipes_bulk_actions_export","list_recipes_bulk_actions_export_by_export_download","list_recipes_by_slug_comments","list_recipes_by_slug_exports","list_recipes_exports","list_recipes_shared_by_token_zip","list_recipes_suggestions","list_recipes_timeline_events","patch_recipes","patch_recipes_by_slug","patch_recipes_by_slug_last_made","update_recipes","update_recipes_by_slug","update_recipes_by_slug_image","update_recipes_timeline_events_by_item","update_recipes_timeline_events_by_item_image"]},{"tag":"admin","count":38,"subs":["groups","users","backups","households","maintenance","ai-providers","providers","about","clean","email","statistics","check","unlock","password-reset-token","upload","restore","storage","images","temp","recipe-folders","debug","openai"],"tools":["create_admin_backups","create_admin_backups_by_file_name_restore","create_admin_backups_upload","create_admin_debug_openai_by_provider","create_admin_email","create_admin_groups","create_admin_groups_by_group_ai_providers_providers","create_admin_households","create_admin_maintenance_clean_images","create_admin_maintenance_clean_recipe_folders","create_admin_maintenance_clean_temp","create_admin_users","create_admin_users_password_reset_token","create_admin_users_unlock","delete_admin_backups_by_file_name","delete_admin_groups_by_group_ai_providers_providers_by_p","delete_admin_groups_by_item","delete_admin_households_by_item","delete_admin_users_by_item","get_admin_backups_by_file_name","get_admin_groups_by_group_ai_providers_providers_by_prov","get_admin_groups_by_item","get_admin_households_by_item","get_admin_users_by_item","list_admin_about","list_admin_about_check","list_admin_about_statistics","list_admin_backups","list_admin_email","list_admin_groups","list_admin_households","list_admin_maintenance","list_admin_maintenance_storage","list_admin_users","update_admin_groups_by_group_ai_providers_providers_by_p","update_admin_groups_by_item","update_admin_households_by_item","update_admin_users_by_item"]},{"tag":"groups","count":26,"subs":["ai-providers","labels","providers","reports","seeders","settings","households","members","preferences","self","storage","migrations","foods","units"],"tools":["create_groups_ai_providers_providers","create_groups_labels","create_groups_migrations","create_groups_seeders_foods","create_groups_seeders_labels","create_groups_seeders_units","delete_groups_ai_providers_providers_by_provider","delete_groups_labels_by_item","delete_groups_reports_by_item","get_groups_ai_providers_providers_by_provider","get_groups_households_by_household_slug","get_groups_labels_by_item","get_groups_members_by_username_or","get_groups_reports_by_item","list_groups_ai_providers_settings","list_groups_households","list_groups_labels","list_groups_members","list_groups_preferences","list_groups_reports","list_groups_self","list_groups_storage","update_groups_ai_providers_providers_by_provider","update_groups_ai_providers_settings","update_groups_labels_by_item","update_groups_preferences"]},{"tag":"organizers","count":20,"subs":["categories","tags","tools","slug","empty"],"tools":["create_organizers_categories","create_organizers_tags","create_organizers_tools","delete_organizers_categories_by_item","delete_organizers_tags_by_item","delete_organizers_tools_by_item","get_organizers_categories_by_item","get_organizers_categories_slug_by_category_slug","get_organizers_tags_by_item","get_organizers_tags_slug_by_tag_slug","get_organizers_tools_by_item","get_organizers_tools_slug_by_tool_slug","list_organizers_categories","list_organizers_categories_empty","list_organizers_tags","list_organizers_tags_empty","list_organizers_tools","update_organizers_categories_by_item","update_organizers_tags_by_item","update_organizers_tools_by_item"]},{"tag":"users","count":17,"subs":["self","ratings","favorites","api-tokens","register","password","forgot-password","reset-password","image"],"tools":["create_users_api_tokens","create_users_by_id_favorites_by_slug","create_users_by_id_image","create_users_by_id_ratings_by_slug","create_users_forgot_password","create_users_register","create_users_reset_password","delete_users_api_tokens_by_token","delete_users_by_id_favorites_by_slug","get_users_self_ratings_by_recipe","list_users_by_id_favorites","list_users_by_id_ratings","list_users_self","list_users_self_favorites","list_users_self_ratings","update_users_by_item","update_users_password"]},{"tag":"explore","count":15,"subs":["groups","organizers","recipes","foods","households","categories","tags","tools","cookbooks","suggestions"],"tools":["get_explore_groups_by_group_slug_cookbooks_by_item","get_explore_groups_by_group_slug_foods_by_item","get_explore_groups_by_group_slug_households_by_household","get_explore_groups_by_group_slug_organizers_categories_b","get_explore_groups_by_group_slug_organizers_tags_by_item","get_explore_groups_by_group_slug_organizers_tools_by_ite","get_explore_groups_by_group_slug_recipes_by_recipe_slug","list_explore_groups_by_group_slug_cookbooks","list_explore_groups_by_group_slug_foods","list_explore_groups_by_group_slug_households","list_explore_groups_by_group_slug_organizers_categories","list_explore_groups_by_group_slug_organizers_tags","list_explore_groups_by_group_slug_organizers_tools","list_explore_groups_by_group_slug_recipes","list_explore_groups_by_group_slug_recipes_suggestions"]},{"tag":"foods","count":6,"subs":["merge"],"tools":["create_foods","delete_foods_by_item","get_foods_by_item","list_foods","update_foods_by_item","update_foods_merge"]},{"tag":"units","count":6,"subs":["merge"],"tools":["create_units","delete_units_by_item","get_units_by_item","list_units","update_units_by_item","update_units_merge"]},{"tag":"auth","count":5,"subs":["oauth","token","callback","refresh","logout"],"tools":["create_auth_logout","create_auth_token","list_auth_oauth","list_auth_oauth_callback","list_auth_refresh"]},{"tag":"comments","count":5,"subs":[],"tools":["create_comments","delete_comments_by_item","get_comments_by_item","list_comments","update_comments_by_item"]},{"tag":"media","count":5,"subs":["recipes","images","timeline","assets","users","docker","validate.txt"],"tools":["get_media_recipes_by_recipe_assets_by_file_name","get_media_recipes_by_recipe_images_by_file_name","get_media_recipes_by_recipe_images_timeline_by_timeline","get_media_users_by_user_by_file_name","list_media_docker_validate_txt"]},{"tag":"shared","count":4,"subs":["recipes"],"tools":["create_shared_recipes","delete_shared_recipes_by_item","get_shared_recipes_by_item","list_shared_recipes"]},{"tag":"app","count":3,"subs":["about","startup-info","theme"],"tools":["list_app_about","list_app_about_startup_info","list_app_about_theme"]},{"tag":"parser","count":2,"subs":["ingredient","ingredients"],"tools":["create_parser_ingredient","create_parser_ingredients"]},{"tag":"utils","count":1,"subs":["download"],"tools":["list_utils_download"]}]/*GROUPS_END*/;
   const TOTAL = GROUPS.reduce((n, g) => n + g.count, 0);
 
   const state = {
@@ -477,22 +515,81 @@
     clientsEl.appendChild(b);
   });
 
-  // ---- build tool-group chips (generated list) ----
+  // ---- preset packs (curated group combos) ----
+  const has = t => GROUPS.some(g => g.tag === t);
+  const PACKS = [
+    {name: "Cooking", tags: ["recipes", "organizers", "foods", "units", "comments", "media"]},
+    {name: "Meal planning", tags: ["recipes", "households", "organizers", "foods", "units"]},
+    {name: "Sharing & browse", tags: ["recipes", "explore", "shared", "comments"]},
+    {name: "Admin & users", tags: ["admin", "groups", "users", "auth"]},
+  ].map(p => ({...p, tags: p.tags.filter(has)}));
+
+  function setTags(tags) {
+    state.tags = tags.slice();
+    groupsEl.querySelectorAll(".grow").forEach(el =>
+      el.setAttribute("aria-pressed", state.tags.includes(el.dataset.tag)));
+    syncPacks();
+    render();
+  }
+  function syncPacks() {
+    const cur = [...state.tags].sort().join(",");   // "" when nothing selected → "All"
+    packsEl.querySelectorAll(".pack").forEach(el =>
+      el.setAttribute("aria-pressed", el.dataset.tags === cur));
+  }
+
+  const packsEl = $("#packs");
+  PACKS.forEach(p => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "pack"; b.dataset.tags = [...p.tags].sort().join(",");
+    b.setAttribute("aria-pressed", "false");
+    b.textContent = p.name;
+    b.addEventListener("click", () => setTags(state.tags.join(",") === b.dataset.tags ? [] : p.tags));
+    packsEl.appendChild(b);
+  });
+  { // an "All (no filter)" reset
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "pack"; b.dataset.tags = "";
+    b.textContent = "All"; b.setAttribute("aria-pressed", "true");
+    b.addEventListener("click", () => setTags([]));
+    packsEl.appendChild(b);
+  }
+
+  // ---- build tool-group cards (name, count, info popup with every tool) ----
   const groupsEl = $("#toolgroups");
   $("#allcount").textContent = String(TOTAL);
-  GROUPS.forEach(({tag, count}) => {
-    const b = document.createElement("button");
-    b.type = "button"; b.className = "gchip"; b.dataset.tag = tag;
-    b.setAttribute("aria-pressed", "false");
-    b.innerHTML = `${esc(tag)} <span class="gc">${count}</span>`;
-    b.addEventListener("click", () => {
+  const CHECK = '<svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5L13 4.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const INFO = '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zm0 2.4a.95.95 0 1 1 0 1.9.95.95 0 0 1 0-1.9zM6.9 7h1.9v4.4h.9v1H6.4v-1h.9V8h-.4V7z"/></svg>';
+
+  function closePops(except) {
+    groupsEl.querySelectorAll(".pop").forEach(p => { if (p !== except) p.hidden = true; });
+  }
+  GROUPS.forEach(({tag, count, tools}) => {
+    const card = document.createElement("div");
+    card.className = "grow"; card.dataset.tag = tag; card.setAttribute("aria-pressed", "false");
+    const list = (tools || []).map(t => `<li>${esc(t)}</li>`).join("");
+    card.innerHTML =
+      `<button type="button" class="gsel">` +
+        `<span class="box">${CHECK}</span>` +
+        `<span class="gname">${esc(tag)}<span class="gc">${count}</span></span>` +
+      `</button>` +
+      `<button type="button" class="ginfo" aria-label="Show ${esc(tag)} tools">${INFO}</button>` +
+      `<div class="pop" hidden><h4><b>${esc(tag)}</b> — ${count} tools</h4><ul>${list}</ul></div>`;
+    const pop = card.querySelector(".pop");
+    card.querySelector(".gsel").addEventListener("click", () => {
+      const on = card.getAttribute("aria-pressed") !== "true";
+      card.setAttribute("aria-pressed", on);
       const i = state.tags.indexOf(tag);
-      if (i === -1) state.tags.push(tag); else state.tags.splice(i, 1);
-      b.setAttribute("aria-pressed", i === -1);
-      render();
+      if (on && i === -1) state.tags.push(tag); else if (!on && i !== -1) state.tags.splice(i, 1);
+      syncPacks(); render();
     });
-    groupsEl.appendChild(b);
+    card.querySelector(".ginfo").addEventListener("click", (e) => {
+      e.stopPropagation();
+      const show = pop.hidden; closePops(pop); pop.hidden = !show;
+    });
+    groupsEl.appendChild(card);
   });
+  document.addEventListener("click", (e) => { if (!e.target.closest(".ginfo, .pop")) closePops(null); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closePops(null); });
 
   // ---- segmented + inputs ----
   function bindSeg(sel, key, after) {
@@ -746,7 +843,7 @@
     }
   }
 
-  syncClient(); syncMethod(); syncAuth(); render();
+  syncClient(); syncMethod(); syncAuth(); syncPacks(); render();
 })();
 </script>
 
