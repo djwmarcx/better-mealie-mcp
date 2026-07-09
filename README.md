@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/badge/tools-259-blue" alt="259 tools">
   <a href="https://github.com/jlowin/fastmcp"><img src="https://img.shields.io/badge/Built%20with-FastMCP-purple" alt="Built with FastMCP"></a>
   <img src="https://img.shields.io/badge/python-3.13%2B-blue" alt="Python 3.13+">
-  <img src="https://img.shields.io/badge/Mealie-v3-brightgreen" alt="Mealie v3">
+  <img src="https://img.shields.io/badge/Mealie-v3.20.1-brightgreen" alt="Mealie v3.20.1">
 </p>
 
 <em>An MCP server exposing <strong>every</strong> <a href="https://mealie.io">Mealie</a> API endpoint —<br>
@@ -128,15 +128,23 @@ FastMCP disambiguates the path parameter with a `__path` suffix (`slug__path`).
 - **259 tools is a lot of idle context.** Most clients handle it, but if yours
   caps tool counts or you want a leaner context, use FastMCP's tool-search or
   filter by tag — ask and it can be wired in.
-- `openapi.json` is a vendored copy of Mealie's **nightly** spec (from
-  `demo.mealie.io`). A nightly GitHub Action
-  ([`update-spec.yml`](.github/workflows/update-spec.yml)) re-pulls it,
-  regenerates [TOOLS.md](./TOOLS.md) and the tool counts, and — **only when the
-  spec actually changed** — commits and cuts a dated
-  [release](https://github.com/djwmarcx/better-mealie-mcp/releases) with the
-  `openapi.json` attached and notes listing added/removed tools. Volatile
-  server-clock defaults are stripped so unchanged nights are true no-ops.
-  Refresh manually with `python scripts/gen_tools.py` after
-  `curl -o openapi.json https://demo.mealie.io/openapi.json`.
+### Versioning
+
+**This MCP's version mirrors the Mealie version its spec targets** — MCP
+`3.20.1` ⇒ Mealie `v3.20.1`. The server advertises it to clients, and
+[VERSIONS.md](./VERSIONS.md) maps every release to its Mealie version and date.
+
+`openapi.json` is a vendored copy of Mealie's spec, generated from a **pinned
+Mealie Docker image** ([`MEALIE_VERSION`](./MEALIE_VERSION)). The
+[`update-spec`](.github/workflows/update-spec.yml) workflow boots that image,
+reads its real version from `/api/app/about`, pulls `/openapi.json`, regenerates
+[TOOLS.md](./TOOLS.md) + counts, and — **only when the spec actually changed** —
+bumps the version, commits, and cuts a
+[release](https://github.com/djwmarcx/better-mealie-mcp/releases) (spec attached,
+notes listing added/removed tools). Volatile server-clock defaults are stripped
+so an unchanged run is a true no-op.
+
+Move to a new Mealie version by bumping `MEALIE_TAG_DEFAULT` in the workflow (or
+run it manually with a `mealie_tag` input — `latest`, `nightly`, or any tag).
 - A few endpoints (`list_auth_oauth*`) return 500 unless OIDC is configured on
   the Mealie side — that's Mealie behavior, not the server.

@@ -44,6 +44,13 @@ VERIFY_SSL = os.environ.get("MEALIE_VERIFY_SSL", "true").lower() not in ("false"
 SERVER_NAME = os.environ.get("MCP_SERVER_NAME", "Better Mealie MCP")
 
 SPEC_PATH = Path(__file__).parent / "openapi.json"
+VERSION_PATH = Path(__file__).parent / "MEALIE_VERSION"
+
+# The Mealie release this vendored spec was generated from (e.g. "v3.20.1").
+# The MCP server advertises the same version, so `MCP version == Mealie version`.
+MEALIE_VERSION = (
+    VERSION_PATH.read_text().strip() if VERSION_PATH.exists() else "unknown"
+)
 
 
 def _get_token() -> str:
@@ -79,6 +86,10 @@ def build_server() -> FastMCP:
         openapi_spec=spec,
         client=client,
         name=SERVER_NAME,
+        # Advertise the targeted Mealie version so clients see the mapping
+        # (MCP version == Mealie version).
+        version=MEALIE_VERSION.lstrip("v"),
+        instructions=f"Exposes every endpoint of the Mealie API ({MEALIE_VERSION}) as a tool.",
         # EVERY route becomes a callable Tool. No exclusions.
         route_maps=[RouteMap(pattern=r".*", mcp_type=MCPType.TOOL)],
         mcp_names=build_names(spec),

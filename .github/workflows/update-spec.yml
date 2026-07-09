@@ -1,9 +1,19 @@
-name: Update Mealie OpenAPI spec (nightly)
+name: Update Mealie OpenAPI spec
 
 on:
   schedule:
-    - cron: "17 4 * * *"   # daily ~06:17 CEST — Mealie demo tracks nightly
+    - cron: "17 4 * * *"   # daily drift check against the pinned tag
   workflow_dispatch:
+    inputs:
+      mealie_tag:
+        description: "Mealie Docker tag to pull the spec from (e.g. v3.21.0, latest, nightly). Blank = the pinned default."
+        required: false
+        default: ""
+
+# Pinned Mealie image tag. Bump this (or dispatch with an input) to move to a
+# new Mealie version — the run then regenerates the spec and cuts a release.
+env:
+  MEALIE_TAG_DEFAULT: "v3.20.1"
 
 permissions:
   contents: write
@@ -22,36 +32,64 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Snapshot current spec (for diffing)
-        run: cp openapi.json /tmp/old-spec.json
+      - name: Resolve + validate the Mealie tag
+        env:
+          INPUT_TAG: ${{ github.event.inputs.mealie_tag }}
+        run: |
+          TAG="${INPUT_TAG:-$MEALIE_TAG_DEFAULT}"
+          if ! printf '%s' "$TAG" | grep -Eq '^[A-Za-z0-9][A-Za-z0-9._-]*$'; then
+            echo "::error::Invalid Mealie tag: $TAG"; exit 1
+          fi
+          echo "MEALIE_TAG=$TAG" >> "$GITHUB_ENV"
+          echo "Using Mealie tag: $TAG"
 
-      - name: Fetch latest spec from demo.mealie.io (nightly)
-        run: curl -fsSL https://demo.mealie.io/openapi.json -o openapi.json
+      - name: Boot Mealie ${{ env.MEALIE_TAG }} and capture its version
+        run: |
+          docker run -d --name mealie -p 9925:9000 \
+            -e ALLOW_SIGNUP=true -e BASE_URL=http://localhost:9925 -e TZ=UTC \
+            "ghcr.io/mealie-recipes/mealie:${MEALIE_TAG}"
+          for i in $(seq 1 80); do
+            code="$(curl -s -o /dev/null -w '%{http_code}' http://localhost:9925/api/app/about || true)"
+            [ "$code" = "200" ] && break
+            sleep 3
+          done
+          VER="$(curl -fsS http://localhost:9925/api/app/about | python -c 'import sys,json;print(json.load(sys.stdin)["version"])')"
+          echo "MEALIE_VERSION=$VER" >> "$GITHUB_ENV"
+          echo "Mealie reports version: $VER"
 
-      - name: Canonicalize spec + regenerate tool reference and counts
-        run: python scripts/gen_tools.py   # normalizes + pretty-writes openapi.json
+      - name: Pull spec, canonicalize, regenerate tool reference
+        run: |
+          cp openapi.json /tmp/old-spec.json
+          curl -fsSL http://localhost:9925/openapi.json -o openapi.json
+          python scripts/gen_tools.py   # normalizes + pretty-writes openapi.json
 
       - name: Commit + release if the spec changed
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           if git diff --quiet; then
-            echo "Spec unchanged — nothing to commit."
+            echo "Spec unchanged for ${MEALIE_VERSION} — nothing to do."
             exit 0
           fi
 
-          VER="$(python -c "import json;print(json.load(open('openapi.json'))['info']['version'])")"
+          DATE="$(date -u +%Y-%m-%d)"
+          TOOLS="$(python -c "import json;from naming import build_names;print(len(build_names(json.load(open('openapi.json')))))")"
+          python scripts/set_version.py "$MEALIE_VERSION" "$DATE" "$TOOLS"
           python scripts/spec_diff.py /tmp/old-spec.json openapi.json > /tmp/notes.md
           echo "----- release notes -----"; cat /tmp/notes.md
 
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "chore: sync Mealie OpenAPI spec (${VER})"
+          git commit -m "chore: sync Mealie OpenAPI spec (${MEALIE_VERSION})"
           git push
 
-          TAG="spec-$(date -u +%Y%m%d-%H%M)"
+          TAG="spec-${MEALIE_VERSION}-${DATE}"
           gh release create "$TAG" openapi.json \
-            --title "Mealie spec ${VER} — $(date -u +%Y-%m-%d)" \
+            --title "Mealie ${MEALIE_VERSION} — ${DATE}" \
             --notes-file /tmp/notes.md \
             --target "$(git rev-parse HEAD)"
+
+      - name: Stop Mealie
+        if: always()
+        run: docker rm -f mealie || true

@@ -3,7 +3,7 @@
   "info": {
     "title": "Mealie",
     "description": "\nMealie is a web application for managing your recipes, meal plans, and shopping lists. This is the Restful\nAPI interactive documentation that can be used to explore the API. If you're justing getting started with\nthe API and want to get started quickly, you can use the\n[API Usage | Mealie Docs](https://docs.mealie.io/documentation/getting-started/api-usage/)\nas a reference for how to get started.\n\n\nIf you have any questions or comments about mealie, please use the discord server to talk to the developers or other\ncommunity members. If you'd like to file an issue, please use the\n[GitHub Issue Tracker | Mealie](https://github.com/mealie-recipes/mealie/issues/new/choose)\n\n\n## Helpful Links\n- [Home Page](https://mealie.io)\n- [Documentation](https://docs.mealie.io)\n- [Discord](https://discord.gg/QuStdQGSGK)\n- [Demo](https://demo.mealie.io)\n",
-    "version": "nightly"
+    "version": "v3.20.1"
   },
   "paths": {
     "/api/app/about": {
@@ -30411,7 +30411,7 @@
           "admin": "false",
           "email": "changeme@example.com",
           "fullName": "Change Me",
-          "group": "home",
+          "group": "Home",
           "household": "Family",
           "username": "ChangeMe"
         }
@@ -30561,7 +30561,7 @@
           "admin": "false",
           "email": "changeme@example.com",
           "fullName": "Change Me",
-          "group": "home",
+          "group": "Home",
           "household": "Family",
           "username": "ChangeMe"
         }
@@ -31060,7 +31060,7 @@
           "admin": "false",
           "email": "changeme@example.com",
           "fullName": "Change Me",
-          "group": "home",
+          "group": "Home",
           "household": "Family",
           "username": "ChangeMe"
         }
