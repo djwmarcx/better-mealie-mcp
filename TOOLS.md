@@ -210,7 +210,7 @@
 |------|--------|------|
 | `get_media_recipes_by_recipe_assets_by_file_name` | GET | `/api/media/recipes/{recipe_id}/assets/{file_name}` |
 | `get_media_recipes_by_recipe_images_by_file_name` | GET | `/api/media/recipes/{recipe_id}/images/{file_name}` |
-| `get_media_recipes_by_recipe_images_timeline_by_timeline_` | GET | `/api/media/recipes/{recipe_id}/images/timeline/{timeline_event_id}/{file_name}` |
+| `get_media_recipes_by_recipe_images_timeline_by_timeline` | GET | `/api/media/recipes/{recipe_id}/images/timeline/{timeline_event_id}/{file_name}` |
 | `get_media_users_by_user_by_file_name` | GET | `/api/media/users/{user_id}/{file_name}` |
 | `list_media_docker_validate_txt` | GET | `/api/media/docker/validate.txt` |
 

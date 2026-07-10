@@ -58,6 +58,52 @@ def render_tools(spec: dict, names: dict[str, str]) -> tuple[str, int]:
     return "\n".join(lines), total
 
 
+def group_counts(spec: dict, names: dict[str, str]) -> list[dict]:
+    """[{tag, count, subs}] per Mealie group (first path segment), biggest first.
+
+    `subs` are the distinct non-parameter path segments under the group — a
+    human-readable hint of the services it covers (e.g. recipes → images,
+    comments, exports, timeline…).
+    """
+    meta = method_and_path(spec)
+    counts: dict[str, int] = collections.Counter()
+    subs: dict[str, collections.Counter] = collections.defaultdict(collections.Counter)
+    tools: dict[str, list[str]] = collections.defaultdict(list)
+    for oid, name in names.items():
+        _, p = meta[oid]
+        seg = [s for s in p.split("/") if s and s != "api"]
+        grp = seg[0] if seg else "misc"
+        counts[grp] += 1
+        tools[grp].append(name)
+        for s in seg[1:]:
+            if not (s.startswith("{") and s.endswith("}")):
+                subs[grp][s] += 1
+    # subs ordered by how many endpoints use them (most representative first)
+    return [
+        {
+            "tag": t,
+            "count": c,
+            "subs": [s for s, _ in subs[t].most_common()],
+            "tools": sorted(tools[t]),
+        }
+        for t, c in sorted(counts.items(), key=lambda kv: -kv[1])
+    ]
+
+
+def inject_groups(groups: list[dict]) -> None:
+    """Write the generated group list into the wizard between markers."""
+    if not WIZARD.exists():
+        return
+    payload = json.dumps(groups, separators=(",", ":"))
+    text = re.sub(
+        r"/\*GROUPS_START\*/.*?/\*GROUPS_END\*/",
+        f"/*GROUPS_START*/{payload}/*GROUPS_END*/",
+        WIZARD.read_text(),
+        flags=re.DOTALL,
+    )
+    WIZARD.write_text(text)
+
+
 def sync_counts(total: int) -> None:
     """Point every tool-count badge at `total`.
 
@@ -97,7 +143,8 @@ def main() -> int:
     text, total = render_tools(spec, names)
     TOOLS.write_text(text)
     sync_counts(total)
-    print(f"TOOLS.md + badges synced to {total} tools")
+    inject_groups(group_counts(spec, names))
+    print(f"TOOLS.md + badges + wizard groups synced to {total} tools")
     return 0
 
 
