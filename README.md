@@ -52,6 +52,19 @@ tool list.
   </a>
 </p>
 
+Don't hand-write JSON. The wizard walks you through every choice and emits a
+ready-to-paste config for **your** combination:
+
+- **Install** — Docker image or from source.
+- **Client** — Claude Code, Claude Desktop, Cursor, VS Code, Gemini CLI, or
+  ChatGPT (it knows each one's config shape).
+- **Connection** — stdio or HTTP, API token or username/password.
+- **Limit tools** *(optional)* — trim the 259 tools to just the groups you need,
+  for leaner context or clients that cap tool counts. Start from a **pack**
+  (*Cooking*, *Meal planning*, *Sharing & browse*, *Admin & users*) or pick
+  groups individually; tap a group's ⓘ to see every tool inside it. Your choice
+  is baked into the generated config as `MEALIE_INCLUDE_TAGS`.
+
 ## 🚀 Setup
 
 **Docker (GHCR image):**
@@ -87,14 +100,39 @@ Auth (set in `.env` or the environment):
 | `MEALIE_TIMEOUT` | Per-request timeout, seconds (default 60) |
 | `MEALIE_VERIFY_SSL` | Verify TLS cert; `false` to accept self-signed (default true) |
 | `MCP_SERVER_NAME` | MCP name advertised to clients (default `Mealie`) |
-| `MEALIE_INCLUDE_TAGS` | Expose **only** these API groups, comma-separated (e.g. `recipes,shopping-lists`). Fewer tools = leaner context / fits clients that cap tool counts |
+| `MEALIE_INCLUDE_TAGS` | Expose **only** these API groups, comma-separated (e.g. `recipes,organizers,foods`). Fewer tools = leaner context / fits clients that cap tool counts |
 | `MEALIE_EXCLUDE_TAGS` | Expose everything **except** these groups (e.g. `admin,households`) |
+| `MEALIE_SLIM_SCHEMAS` | Trim redundant schema noise — default `true` (see modes below) |
+| `MEALIE_SLIM_AGGRESSIVE` | Also collapse nullable `anyOf` unions — default `false` |
+| `MEALIE_VALIDATE_OUTPUT` | Emit per-tool output schemas + validate results — default `false` |
 
-Groups are the first path segment (`recipes`, `households`, `admin`, `groups`,
-`organizers`, `users`, `explore`, `foods`, `units`, `auth`, `comments`, `media`,
-`shared`, `app`, `parser`, `utils`). Unset = all 259 tools. `INCLUDE` wins if
-both are set. The [Setup Wizard](https://djwmarcx.github.io/better-mealie-mcp/)
-has a checkbox picker that fills `MEALIE_INCLUDE_TAGS` for you.
+Groups are the first path segment of the API (`recipes`, `households`, `admin`,
+`organizers`, `users`, `explore`, `foods`, `units`, …). Unset = every tool.
+`INCLUDE` wins if both are set. See [TOOLS.md](./TOOLS.md) for the current
+groups and what's in each, or let the
+[Setup Wizard](https://djwmarcx.github.io/better-mealie-mcp/) pick them — its
+group picker (with one-click **packs** like *Cooking* or *Meal planning*) fills
+`MEALIE_INCLUDE_TAGS` for you.
+
+### Context size (schema detail)
+
+Every tool this server exposes ships its JSON schema to the model on **every**
+request — that "idle context" is pure overhead until a tool is actually called.
+With all 259 tools the full schemas are ~240k tokens, so the server trims them.
+Three preset modes (all endpoints stay callable — only the *schema detail* the
+model sees changes):
+
+| Mode | Env | Idle context | What it does |
+|------|-----|-------------:|--------------|
+| **Lean** *(default)* | *(none — the default)* | **~61k tok** | Drops redundant `title`s (FastAPI auto-generates them from field names) and echoed `default`s, and omits output/response schemas. No loss of callable capability. |
+| **Leanest** | `MEALIE_SLIM_AGGRESSIVE=true` | **~51k tok** | Everything Lean does, **plus** collapses nullable `anyOf:[{X},{null}]` unions to `X` (drops the explicit "null allowed" hint). |
+| **Full** | `MEALIE_SLIM_SCHEMAS=false`<br>`MEALIE_VALIDATE_OUTPUT=true` | **~240k tok** | Complete, untrimmed input **and** output schemas, with client-side result validation. Use only if your client relies on structured-output schemas. |
+
+Everything the model needs to make a **correct** call (`format`, real
+`description`s, required fields) is kept in every mode. Combine with tag
+filtering above to shrink further — the
+[Setup Wizard](https://djwmarcx.github.io/better-mealie-mcp/) shows a live token
+estimate for your exact combination.
 
 ## ▶️ Run
 
@@ -121,9 +159,11 @@ Default admin login: `changeme@example.com` / `MyPassword`.
 
 ## 📝 Notes
 
-- **Exposing every endpoint is a lot of tools — a lot of idle context.** Most clients handle it, but if yours
-  caps tool counts or you want a leaner context, use FastMCP's tool-search or
-  filter by tag — ask and it can be wired in.
+- **Exposing every endpoint is a lot of tools — a lot of idle context.** Most
+  clients handle it fine. If yours caps tool counts or you want a leaner
+  context, trim the toolset with `MEALIE_INCLUDE_TAGS` / `MEALIE_EXCLUDE_TAGS`
+  (see [Setup](#-setup)) or the wizard's group picker.
+
 ### Versioning
 
 **This MCP's version mirrors the Mealie version its spec targets** — MCP

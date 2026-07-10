@@ -33,7 +33,7 @@ from dotenv import load_dotenv
 from fastmcp import FastMCP
 from fastmcp.server.providers.openapi import MCPType, RouteMap
 
-from .naming import build_names, normalize
+from .naming import build_names, normalize, slim
 
 load_dotenv()  # pick up a local .env if present
 
@@ -49,6 +49,14 @@ SERVER_NAME = os.environ.get("MCP_SERVER_NAME", "Better Mealie MCP")
 # that cap tool counts. INCLUDE wins if both are set; unset = every endpoint.
 INCLUDE_TAGS = [t.strip() for t in os.environ.get("MEALIE_INCLUDE_TAGS", "").split(",") if t.strip()]
 EXCLUDE_TAGS = [t.strip() for t in os.environ.get("MEALIE_EXCLUDE_TAGS", "").split(",") if t.strip()]
+# Trim schema noise (redundant `title`, echoed `default`) to shrink idle
+# context — on by default, no loss of callable capability. "aggressive" also
+# collapses nullable anyOf (drops the explicit null-allowed signal); opt-in.
+SLIM = os.environ.get("MEALIE_SLIM_SCHEMAS", "true").lower() not in ("false", "0", "no")
+SLIM_AGGRESSIVE = os.environ.get("MEALIE_SLIM_AGGRESSIVE", "false").lower() in ("true", "1", "yes")
+# Emit per-tool output (response) schemas. These are the single biggest chunk
+# of idle context; off by default, opt back in for structured-output clients.
+VALIDATE_OUTPUT = os.environ.get("MEALIE_VALIDATE_OUTPUT", "false").lower() in ("true", "1", "yes")
 
 
 def _route_maps() -> list[RouteMap]:
@@ -112,6 +120,11 @@ def _get_token() -> str:
 
 def build_server() -> FastMCP:
     spec = normalize(json.loads(SPEC_PATH.read_text()))
+    if SLIM:
+        # Only the schema subtrees — never the top-level `info` (its `title` is
+        # a required OpenAPI field) or other doc metadata.
+        slim(spec.get("components", {}), aggressive=SLIM_AGGRESSIVE)
+        slim(spec.get("paths", {}), aggressive=SLIM_AGGRESSIVE)
     token = _get_token()
 
     client = httpx.AsyncClient(
@@ -131,6 +144,12 @@ def build_server() -> FastMCP:
         instructions=f"Exposes every endpoint of the Mealie API ({MEALIE_VERSION}) as a tool.",
         route_maps=_route_maps(),
         mcp_names=build_names(spec),
+        # Response-shape schemas dwarf everything else in idle context (~2× the
+        # input schemas) and the model doesn't need them to make a call — tools
+        # still return their JSON, just without client-side output validation.
+        # Off by default for a lean context; set MEALIE_VALIDATE_OUTPUT=true to
+        # restore structured-output schemas.
+        validate_output=VALIDATE_OUTPUT,
     )
 
 
