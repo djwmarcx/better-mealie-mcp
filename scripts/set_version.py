@@ -22,6 +22,8 @@ def main(mealie_version: str, date: str, tools: str) -> int:
     mcp_version = mealie_version.lstrip("v")
 
     (ROOT / "MEALIE_VERSION").write_text(mealie_version + "\n")
+    # A new Mealie version resets the MCP revision counter to the base build.
+    (ROOT / "REVISION").write_text("1\n")
 
     pyproject = ROOT / "pyproject.toml"
     text = pyproject.read_text()

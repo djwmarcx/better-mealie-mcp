@@ -1,15 +1,19 @@
 name: Release on spec change
 
-# Fires when a spec bump lands on main (i.e. a spec-update PR is merged).
-# Cuts a GitHub release with the new openapi.json and notes describing the
-# tool changes. Release creation lives here — not in update-spec — because
-# main is protected and all changes arrive via merged PRs.
+# Fires when a version bump lands on main (a spec-update PR, or a REVISION bump
+# for MCP-only changes). Cuts a GitHub release; release creation lives here —
+# not in update-spec — because main is protected and all changes arrive via PRs.
+#
+# Tag scheme: v<mealie-version>, plus -r<n> for MCP-only revisions on the same
+# Mealie version (REVISION=1 is the base release and carries no suffix).
 
 on:
   push:
     branches: [main]
     paths:
-      - "MEALIE_VERSION"
+      - "MEALIE_VERSION"   # new Mealie version
+      - "REVISION"         # MCP-only change on the same Mealie version
+  workflow_dispatch:       # manual re-release
 
 permissions:
   contents: write
@@ -30,14 +34,17 @@ jobs:
         with:
           python-version: "3.14"
 
-      - name: Cut release for this Mealie version
+      - name: Cut release for this version
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          VER="$(cat MEALIE_VERSION)"   # e.g. v3.20.1 — semver tag, mirrors the MCP version
+          VER="$(cat MEALIE_VERSION)"                 # e.g. v3.20.1
+          REV="$(tr -dc '0-9' < REVISION 2>/dev/null || echo 1)"; REV="${REV:-1}"
+          TAG="$VER"; TITLE="Mealie ${VER}"
+          if [ "$REV" -gt 1 ]; then TAG="${VER}-r${REV}"; TITLE="Mealie ${VER} (build r${REV})"; fi
 
-          if gh release view "$VER" >/dev/null 2>&1; then
-            echo "Release $VER already exists — nothing to do."
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists — nothing to do."
             exit 0
           fi
 
@@ -45,7 +52,7 @@ jobs:
           python scripts/spec_diff.py /tmp/old-spec.json openapi.json > /tmp/notes.md
           echo "----- release notes -----"; cat /tmp/notes.md
 
-          gh release create "$VER" openapi.json \
-            --title "Mealie ${VER}" \
+          gh release create "$TAG" openapi.json \
+            --title "$TITLE" \
             --notes-file /tmp/notes.md \
             --latest
