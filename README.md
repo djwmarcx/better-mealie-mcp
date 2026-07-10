@@ -170,6 +170,12 @@ Default admin login: `changeme@example.com` / `MyPassword`.
 `3.20.1` ⇒ Mealie `v3.20.1`. The server advertises it to clients, and
 [VERSIONS.md](./VERSIONS.md) maps every release to its Mealie version and date.
 
+MCP-only changes (features/fixes with no Mealie version change) ship as a
+**revision** of the same Mealie version: the [`REVISION`](./REVISION) counter
+bumps and the release/image tag gains a `-r<n>` suffix — e.g. `v3.20.1-r2`
+(`-r1` is the base and carries no suffix). A new Mealie version resets the
+counter. `:latest` always points at the newest build.
+
 `openapi.json` is a vendored copy of Mealie's spec. The
 [`update-spec`](.github/workflows/update-spec.yml) workflow runs daily and
 **auto-tracks the latest stable Mealie release** (`mealie:latest`): it boots that

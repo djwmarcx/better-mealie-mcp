@@ -34,8 +34,11 @@ jobs:
         env:
           REPO: ${{ github.repository }}
         run: |
+          # Tag = <mealie-version> plus -r<n> for MCP-only revisions (rev 1 = base).
           VER="$(tr -d 'v[:space:]' < MEALIE_VERSION)"
+          REV="$(tr -dc '0-9' < REVISION 2>/dev/null || echo 1)"; REV="${REV:-1}"
+          TAG="$VER"; [ "$REV" -gt 1 ] && TAG="${VER}-r${REV}"
           IMG="ghcr.io/$REPO"
-          docker build -t "$IMG:$VER" -t "$IMG:latest" .
-          docker push "$IMG:$VER"
+          docker build -t "$IMG:$TAG" -t "$IMG:latest" .
+          docker push "$IMG:$TAG"
           docker push "$IMG:latest"
