@@ -90,5 +90,38 @@ def normalize(node):
     return node
 
 
+def slim(node, aggressive: bool = False):
+    """Trim schema noise to shrink idle MCP context, in place.
+
+    Every byte here rides on the vendored spec — nothing is invented, only
+    dropped when it carries no information the model needs to make a valid call:
+
+    - `title`  — FastAPI auto-titles every field ("Item Id" for `item_id`);
+      100% redundant with the property key. Biggest win (~-25%).
+    - `default` — the server applies its own defaults; the input schema doesn't
+      need to echo them. Safe to omit (~-5%).
+
+    `format` and `description` are kept — they help the model produce correct
+    values. With `aggressive`, also collapse `anyOf:[{X},{null}]` (a nullable/
+    optional field) down to `X`; this drops the explicit "null allowed" signal,
+    so it's opt-in (~-15% more).
+    """
+    if isinstance(node, dict):
+        node.pop("title", None)
+        node.pop("default", None)
+        if aggressive:
+            ao = node.get("anyOf")
+            if isinstance(ao, list) and len(ao) == 2 and {"type": "null"} in ao:
+                keep = next(x for x in ao if x != {"type": "null"})
+                node.pop("anyOf")
+                node.update(keep)
+        for v in list(node.values()):
+            slim(v, aggressive)
+    elif isinstance(node, list):
+        for v in node:
+            slim(v, aggressive)
+    return node
+
+
 # Backwards-compatible alias.
 sanitize = normalize

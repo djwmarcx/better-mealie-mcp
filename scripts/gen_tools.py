@@ -90,6 +90,63 @@ def group_counts(spec: dict, names: dict[str, str]) -> list[dict]:
     ]
 
 
+def context_costs(spec: dict, names: dict[str, str]) -> dict[str, dict[str, int]]:
+    """Per-group wire-char cost in each context mode: {tag: {leanest,lean,full}}.
+
+    Builds the FastMCP server offline (dummy client, no network) in each mode and
+    sums each tool's serialized MCP wire size, grouped by tag. The wizard adds
+    these up for the chosen groups + mode to show a live token estimate. Kept
+    here so it regenerates whenever the spec changes.
+    """
+    import asyncio
+
+    import httpx
+    from fastmcp import FastMCP
+    from fastmcp.server.providers.openapi import MCPType, RouteMap
+
+    from better_mealie_mcp.naming import normalize, slim
+
+    meta = method_and_path(spec)
+    group_of = {}
+    for oid, name in names.items():
+        _, p = meta[oid]
+        seg = [s for s in p.split("/") if s and s != "api"]
+        group_of[name] = seg[0] if seg else "misc"
+
+    costs: dict[str, dict[str, int]] = collections.defaultdict(dict)
+    for mode in ("leanest", "lean", "full"):
+        s = normalize(json.loads(json.dumps(spec)))  # deep copy
+        if mode != "full":
+            slim(s.get("components", {}), aggressive=(mode == "leanest"))
+            slim(s.get("paths", {}), aggressive=(mode == "leanest"))
+        m = FastMCP.from_openapi(
+            openapi_spec=s, client=httpx.AsyncClient(base_url="http://x"), name="m",
+            route_maps=[RouteMap(pattern=r".*", mcp_type=MCPType.TOOL)],
+            mcp_names=build_names(s), validate_output=(mode == "full"),
+        )
+        per = collections.Counter()
+        for t in asyncio.run(m.list_tools()):
+            w = t.to_mcp_tool().model_dump(exclude_none=True)
+            per[group_of.get(w["name"], "misc")] += len(json.dumps(w, separators=(",", ":")))
+        for g, c in per.items():
+            costs[g][mode] = c
+    return costs
+
+
+def inject_costs(costs: dict) -> None:
+    """Write the per-group context-cost table into the wizard between markers."""
+    if not WIZARD.exists():
+        return
+    payload = json.dumps(costs, separators=(",", ":"))
+    text = re.sub(
+        r"/\*COSTS_START\*/.*?/\*COSTS_END\*/",
+        f"/*COSTS_START*/{payload}/*COSTS_END*/",
+        WIZARD.read_text(),
+        flags=re.DOTALL,
+    )
+    WIZARD.write_text(text)
+
+
 def inject_groups(groups: list[dict]) -> None:
     """Write the generated group list into the wizard between markers."""
     if not WIZARD.exists():
@@ -144,6 +201,7 @@ def main() -> int:
     TOOLS.write_text(text)
     sync_counts(total)
     inject_groups(group_counts(spec, names))
+    inject_costs(context_costs(spec, names))
     print(f"TOOLS.md + badges + wizard groups synced to {total} tools")
     return 0
 
