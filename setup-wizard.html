@@ -126,6 +126,8 @@
   .row { display:flex; flex-direction:column; gap:6px; margin-bottom:15px; }
   .row label { font-size:.82rem; font-weight:560; color:var(--ink); }
   .row .sub { color:var(--faint); font-weight:400; }
+  .row .sub a { color:var(--basil); text-decoration:none; border-bottom:1px solid color-mix(in oklab,var(--basil) 35%,transparent); }
+  .row .sub a:hover { color:var(--basil-2); }
   .field { display:flex; align-items:center; gap:8px; }
   input[type=text], input[type=password] {
     width:100%; font-family:var(--mono); font-size:.86rem; color:var(--ink);
@@ -428,7 +430,7 @@
         </div>
 
         <div class="row" id="tokenRow">
-          <label for="token">API token <span class="sub">— Mealie → Profile → Manage API Tokens</span></label>
+          <label for="token">API token <span class="sub">— Mealie → Profile → <a id="tokenLink" href="#" target="_blank" rel="noopener">Manage API Tokens ↗</a></span></label>
           <div class="field">
             <input id="token" type="password" spellcheck="false" placeholder="paste your long-lived token" autocomplete="off">
             <button type="button" class="ghost" id="revToken">Show</button>
@@ -881,6 +883,10 @@
     const c = CLIENTS[state.client];
     $("#outTitle").textContent = c.name;
     $("#outFile").textContent = state.transport === "http" && c.file !== "connector" ? c.file + " · http" : c.file;
+
+    // Deep-link the token hint straight to this Mealie's token page.
+    const base = (state.url || "http://localhost:9925").replace(/\/+$/, "");
+    $("#tokenLink").href = base + "/user/profile/api-tokens";
 
     const blocks = genConfig();
     const out = $("#output");
