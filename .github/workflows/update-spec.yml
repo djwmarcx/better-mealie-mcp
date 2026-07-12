@@ -35,6 +35,9 @@ jobs:
         with:
           python-version: "3.14"
 
+      - name: Install project (gen_tools needs fastmcp + httpx to measure costs)
+        run: pip install .
+
       - name: Resolve + validate the Mealie tag
         env:
           INPUT_TAG: ${{ github.event.inputs.mealie_tag }}
