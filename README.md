@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/badge/tools-259-blue" alt="259 tools">
   <a href="https://github.com/jlowin/fastmcp"><img src="https://img.shields.io/badge/Built%20with-FastMCP-purple" alt="Built with FastMCP"></a>
   <img src="https://img.shields.io/badge/python-3.14%2B-blue" alt="Python 3.14+">
-  <img src="https://img.shields.io/badge/Mealie-v3.20.1-brightgreen" alt="Mealie v3.20.1">
+  <img src="https://img.shields.io/badge/Mealie-v3.21.0-brightgreen" alt="Mealie v3.21.0">
 </p>
 <p>
   <a href="https://github.com/djwmarcx/better-mealie-mcp/actions/workflows/pages.yml"><img src="https://img.shields.io/github/actions/workflow/status/djwmarcx/better-mealie-mcp/pages.yml?branch=main&label=setup%20wizard" alt="Setup wizard deploy"></a>
