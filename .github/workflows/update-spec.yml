@@ -84,7 +84,9 @@ jobs:
           python scripts/spec_diff.py /tmp/old-spec.json openapi.json > /tmp/notes.md
           echo "----- proposed change -----"; cat /tmp/notes.md
 
-          BRANCH="bot/spec-${MEALIE_VERSION}-${DATE}"
+          # One branch per Mealie version, no date: a stale PR gets force-pushed
+          # and refreshed instead of piling up a new PR every night.
+          BRANCH="bot/spec-${MEALIE_VERSION}"
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$BRANCH"
