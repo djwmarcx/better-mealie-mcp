@@ -17,6 +17,7 @@ on:
 
 permissions:
   contents: write
+  actions: write   # dispatch publish.yml after cutting the release
 
 concurrency:
   group: release-on-spec
@@ -56,3 +57,7 @@ jobs:
             --title "$TITLE" \
             --notes-file /tmp/notes.md \
             --latest
+
+          # Releases created with GITHUB_TOKEN don't fire `release:` triggers
+          # (recursion guard), so publish.yml must be dispatched explicitly.
+          gh workflow run publish.yml --ref main
