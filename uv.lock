@@ -68,7 +68,7 @@ wheels = [
 
 [[package]]
 name = "better-mealie-mcp"
-version = "3.20.1"
+version = "3.22.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastmcp" },
