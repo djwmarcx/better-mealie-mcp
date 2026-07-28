@@ -8,5 +8,6 @@ added whenever the spec actually changes.
 
 | MCP version | Mealie version | Date | Tools |
 |-------------|----------------|------|-------|
+| 3.22.0 | v3.22.0 | 2026-07-28 | 259 |
 | 3.21.0 | v3.21.0 | 2026-07-24 | 259 |
 | 3.20.1 | v3.20.1 | 2026-07-05 | 259 |
