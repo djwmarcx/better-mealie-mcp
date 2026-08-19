@@ -3,7 +3,7 @@
   "info": {
     "title": "Mealie",
     "description": "\nMealie is a web application for managing your recipes, meal plans, and shopping lists. This is the Restful\nAPI interactive documentation that can be used to explore the API. If you're justing getting started with\nthe API and want to get started quickly, you can use the\n[API Usage | Mealie Docs](https://docs.mealie.io/documentation/getting-started/api-usage/)\nas a reference for how to get started.\n\n\nIf you have any questions or comments about mealie, please use the discord server to talk to the developers or other\ncommunity members. If you'd like to file an issue, please use the\n[GitHub Issue Tracker | Mealie](https://github.com/mealie-recipes/mealie/issues/new/choose)\n\n\n## Helpful Links\n- [Home Page](https://mealie.io)\n- [Documentation](https://docs.mealie.io)\n- [Discord](https://discord.gg/QuStdQGSGK)\n- [Demo](https://demo.mealie.io)\n",
-    "version": "v3.22.0"
+    "version": "v3.23.1"
   },
   "paths": {
     "/api/app/about": {
@@ -142,6 +142,68 @@
             "content": {
               "application/json": {
                 "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/oauth/native/config": {
+      "get": {
+        "tags": [
+          "Users: Authentication"
+        ],
+        "summary": "Oauth Native Config",
+        "description": "Return the parameters a native client needs to build its own OIDC authorization request.",
+        "operationId": "oauth_native_config_api_auth_oauth_native_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OIDCNativeConfig"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/oauth/native/token": {
+      "post": {
+        "tags": [
+          "Users: Authentication"
+        ],
+        "summary": "Oauth Native Token",
+        "description": "Exchange a native client's authorization code for a Mealie token.\n\nThe native client owns PKCE and state, so the exchange happens server-side without a browser\nsession cookie. This lets passkey-capable system-browser logins (e.g. Pocket ID) work, which\nthe cookie-coupled web callback cannot support.",
+        "operationId": "oauth_native_token_api_auth_oauth_native_token_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NativeOIDCTokenRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }
@@ -8730,6 +8792,150 @@
         }
       }
     },
+    "/api/recipes/create/ai": {
+      "post": {
+        "tags": [
+          "Recipe: CRUD"
+        ],
+        "summary": "Create Recipe With Ai",
+        "description": "Create a recipe from any combination of content (HTML, JSON, or text), images, and a URL,\nusing AI. Optionally specify a language for it to translate the recipe to.",
+        "operationId": "create_recipe_with_ai_api_recipes_create_ai_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_create_recipe_with_ai_api_recipes_create_ai_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "title": "Response Create Recipe With Ai Api Recipes Create Ai Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recipes/create/ai/stream": {
+      "post": {
+        "tags": [
+          "Recipe: CRUD"
+        ],
+        "summary": "Create Recipe With Ai Stream",
+        "description": "Create a recipe from any combination of content (HTML, JSON, or text), images, and a URL,\nusing AI, streaming progress via SSE",
+        "operationId": "create_recipe_with_ai_stream_api_recipes_create_ai_stream_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_create_recipe_with_ai_stream_api_recipes_create_ai_stream_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/event-stream": {
+                "itemSchema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "string"
+                    },
+                    "event": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "retry": {
+                      "type": "integer",
+                      "minimum": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/recipes/create/url/bulk": {
       "post": {
         "tags": [
@@ -8830,85 +9036,6 @@
             "multipart/form-data": {
               "schema": {
                 "$ref": "#/components/schemas/Body_create_recipe_from_zip_api_recipes_create_zip_post"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/recipes/create/image": {
-      "post": {
-        "tags": [
-          "Recipe: CRUD"
-        ],
-        "summary": "Create Recipe From Image",
-        "description": "Create a recipe from an image using OpenAI.\nOptionally specify a language for it to translate the recipe to.",
-        "operationId": "create_recipe_from_image_api_recipes_create_image_post",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "translateLanguage",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Translatelanguage"
-            }
-          },
-          {
-            "name": "accept-language",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Accept-Language"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/Body_create_recipe_from_image_api_recipes_create_image_post"
               }
             }
           }
@@ -10169,7 +10296,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateImageResponse"
+                }
               }
             }
           },
@@ -20630,23 +20759,6 @@
         ],
         "title": "BackupFile"
       },
-      "Body_create_recipe_from_image_api_recipes_create_image_post": {
-        "properties": {
-          "images": {
-            "items": {
-              "type": "string",
-              "contentMediaType": "application/octet-stream"
-            },
-            "type": "array",
-            "title": "Images"
-          }
-        },
-        "type": "object",
-        "required": [
-          "images"
-        ],
-        "title": "Body_create_recipe_from_image_api_recipes_create_image_post"
-      },
       "Body_create_recipe_from_zip_api_recipes_create_zip_post": {
         "properties": {
           "archive": {
@@ -20660,6 +20772,110 @@
           "archive"
         ],
         "title": "Body_create_recipe_from_zip_api_recipes_create_zip_post"
+      },
+      "Body_create_recipe_with_ai_api_recipes_create_ai_post": {
+        "properties": {
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          },
+          "translateLanguage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Translatelanguage"
+          },
+          "createNewOrganizers": {
+            "type": "boolean",
+            "title": "Createneworganizers",
+            "default": false
+          },
+          "images": {
+            "items": {
+              "type": "string",
+              "contentMediaType": "application/octet-stream"
+            },
+            "type": "array",
+            "title": "Images"
+          }
+        },
+        "type": "object",
+        "title": "Body_create_recipe_with_ai_api_recipes_create_ai_post"
+      },
+      "Body_create_recipe_with_ai_stream_api_recipes_create_ai_stream_post": {
+        "properties": {
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          },
+          "translateLanguage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Translatelanguage"
+          },
+          "createNewOrganizers": {
+            "type": "boolean",
+            "title": "Createneworganizers",
+            "default": false
+          },
+          "images": {
+            "items": {
+              "type": "string",
+              "contentMediaType": "application/octet-stream"
+            },
+            "type": "array",
+            "title": "Images"
+          }
+        },
+        "type": "object",
+        "title": "Body_create_recipe_with_ai_stream_api_recipes_create_ai_stream_post"
       },
       "Body_debug_openai_api_admin_debug_openai__provider_id__post": {
         "properties": {
@@ -24188,6 +24404,41 @@
         ],
         "title": "MultiPurposeLabelUpdate"
       },
+      "NativeOIDCTokenRequest": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "code_verifier": {
+            "type": "string",
+            "title": "Code Verifier"
+          },
+          "redirect_uri": {
+            "type": "string",
+            "title": "Redirect Uri"
+          },
+          "nonce": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nonce"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "code_verifier",
+          "redirect_uri"
+        ],
+        "title": "NativeOIDCTokenRequest",
+        "description": "An authorization code captured by a native client, for server-side exchange."
+      },
       "Nutrition": {
         "properties": {
           "calories": {
@@ -24314,6 +24565,30 @@
         },
         "type": "object",
         "title": "Nutrition"
+      },
+      "OIDCNativeConfig": {
+        "properties": {
+          "authorization_endpoint": {
+            "type": "string",
+            "title": "Authorization Endpoint"
+          },
+          "client_id": {
+            "type": "string",
+            "title": "Client Id"
+          },
+          "scope": {
+            "type": "string",
+            "title": "Scope"
+          }
+        },
+        "type": "object",
+        "required": [
+          "authorization_endpoint",
+          "client_id",
+          "scope"
+        ],
+        "title": "OIDCNativeConfig",
+        "description": "Parameters a native client needs to start an OIDC authorization request itself."
       },
       "OrderByNullPosition": {
         "type": "string",

@@ -1,6 +1,6 @@
 # Better Mealie MCP — Tool Reference
 
-**259 tools**, auto-generated from Mealie's OpenAPI spec. Every endpoint included, none excluded.
+**262 tools**, auto-generated from Mealie's OpenAPI spec. Every endpoint included, none excluded.
 
 ## `admin` (38)
 
@@ -53,14 +53,16 @@
 | `list_app_about_startup_info` | GET | `/api/app/about/startup-info` |
 | `list_app_about_theme` | GET | `/api/app/about/theme` |
 
-## `auth` (5)
+## `auth` (7)
 
 | tool | method | path |
 |------|--------|------|
 | `create_auth_logout` | POST | `/api/auth/logout` |
+| `create_auth_oauth_native_token` | POST | `/api/auth/oauth/native/token` |
 | `create_auth_token` | POST | `/api/auth/token` |
 | `list_auth_oauth` | GET | `/api/auth/oauth` |
 | `list_auth_oauth_callback` | GET | `/api/auth/oauth/callback` |
+| `list_auth_oauth_native_config` | GET | `/api/auth/oauth/native/config` |
 | `list_auth_refresh` | GET | `/api/auth/refresh` |
 
 ## `comments` (5)
@@ -246,7 +248,7 @@
 | `create_parser_ingredient` | POST | `/api/parser/ingredient` |
 | `create_parser_ingredients` | POST | `/api/parser/ingredients` |
 
-## `recipes` (42)
+## `recipes` (43)
 
 | tool | method | path |
 |------|--------|------|
@@ -259,9 +261,10 @@
 | `create_recipes_by_slug_assets` | POST | `/api/recipes/{slug}/assets` |
 | `create_recipes_by_slug_duplicate` | POST | `/api/recipes/{slug}/duplicate` |
 | `create_recipes_by_slug_image` | POST | `/api/recipes/{slug}/image` |
+| `create_recipes_create_ai` | POST | `/api/recipes/create/ai` |
+| `create_recipes_create_ai_stream` | POST | `/api/recipes/create/ai/stream` |
 | `create_recipes_create_html_or_json` | POST | `/api/recipes/create/html-or-json` |
 | `create_recipes_create_html_or_json_stream` | POST | `/api/recipes/create/html-or-json/stream` |
-| `create_recipes_create_image` | POST | `/api/recipes/create/image` |
 | `create_recipes_create_url` | POST | `/api/recipes/create/url` |
 | `create_recipes_create_url_bulk` | POST | `/api/recipes/create/url/bulk` |
 | `create_recipes_create_url_stream` | POST | `/api/recipes/create/url/stream` |
