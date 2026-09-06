@@ -1,6 +1,6 @@
 # Better Mealie MCP — Tool Reference
 
-**262 tools**, auto-generated from Mealie's OpenAPI spec. Every endpoint included, none excluded.
+**264 tools**, auto-generated from Mealie's OpenAPI spec. Every endpoint included, none excluded.
 
 ## `admin` (38)
 
@@ -59,11 +59,11 @@
 |------|--------|------|
 | `create_auth_logout` | POST | `/api/auth/logout` |
 | `create_auth_oauth_native_token` | POST | `/api/auth/oauth/native/token` |
+| `create_auth_refresh` | POST | `/api/auth/refresh` |
 | `create_auth_token` | POST | `/api/auth/token` |
 | `list_auth_oauth` | GET | `/api/auth/oauth` |
 | `list_auth_oauth_callback` | GET | `/api/auth/oauth/callback` |
 | `list_auth_oauth_native_config` | GET | `/api/auth/oauth/native/config` |
-| `list_auth_refresh` | GET | `/api/auth/refresh` |
 
 ## `comments` (5)
 
@@ -216,12 +216,14 @@
 | `get_media_users_by_user_by_file_name` | GET | `/api/media/users/{user_id}/{file_name}` |
 | `list_media_docker_validate_txt` | GET | `/api/media/docker/validate.txt` |
 
-## `organizers` (20)
+## `organizers` (22)
 
 | tool | method | path |
 |------|--------|------|
 | `create_organizers_categories` | POST | `/api/organizers/categories` |
+| `create_organizers_categories_merge` | POST | `/api/organizers/categories/merge` |
 | `create_organizers_tags` | POST | `/api/organizers/tags` |
+| `create_organizers_tags_merge` | POST | `/api/organizers/tags/merge` |
 | `create_organizers_tools` | POST | `/api/organizers/tools` |
 | `delete_organizers_categories_by_item` | DELETE | `/api/organizers/categories/{item_id}` |
 | `delete_organizers_tags_by_item` | DELETE | `/api/organizers/tags/{item_id}` |
