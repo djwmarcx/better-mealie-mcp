@@ -3,7 +3,7 @@
   "info": {
     "title": "Mealie",
     "description": "\nMealie is a web application for managing your recipes, meal plans, and shopping lists. This is the Restful\nAPI interactive documentation that can be used to explore the API. If you're justing getting started with\nthe API and want to get started quickly, you can use the\n[API Usage | Mealie Docs](https://docs.mealie.io/documentation/getting-started/api-usage/)\nas a reference for how to get started.\n\n\nIf you have any questions or comments about mealie, please use the discord server to talk to the developers or other\ncommunity members. If you'd like to file an issue, please use the\n[GitHub Issue Tracker | Mealie](https://github.com/mealie-recipes/mealie/issues/new/choose)\n\n\n## Helpful Links\n- [Home Page](https://mealie.io)\n- [Documentation](https://docs.mealie.io)\n- [Discord](https://discord.gg/QuStdQGSGK)\n- [Demo](https://demo.mealie.io)\n",
-    "version": "v3.25.1"
+    "version": "v3.26.0"
   },
   "paths": {
     "/api/app/about": {
@@ -9786,6 +9786,16 @@
               "type": "boolean",
               "default": true,
               "title": "Includetoolsonhand"
+            }
+          },
+          {
+            "name": "includeSubstitutions",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Includesubstitutions"
             }
           },
           {
@@ -19733,6 +19743,16 @@
             }
           },
           {
+            "name": "includeSubstitutions",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Includesubstitutions"
+            }
+          },
+          {
             "name": "accept-language",
             "in": "header",
             "required": false,
@@ -21577,6 +21597,14 @@
             "title": "Aliases",
             "default": []
           },
+          "substitutions": {
+            "items": {
+              "$ref": "#/components/schemas/CreateIngredientFoodSubstitution"
+            },
+            "type": "array",
+            "title": "Substitutions",
+            "default": []
+          },
           "householdsWithIngredientFood": {
             "items": {
               "type": "string"
@@ -21604,6 +21632,35 @@
           "name"
         ],
         "title": "CreateIngredientFoodAlias"
+      },
+      "CreateIngredientFoodSubstitution": {
+        "properties": {
+          "substituteFoodId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Substitutefoodid"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "title": "CreateIngredientFoodSubstitution"
       },
       "CreateIngredientUnit": {
         "properties": {
@@ -23601,6 +23658,14 @@
             "title": "Aliases",
             "default": []
           },
+          "substitutions": {
+            "items": {
+              "$ref": "#/components/schemas/IngredientFoodSubstitution"
+            },
+            "type": "array",
+            "title": "Substitutions",
+            "default": []
+          },
           "householdsWithIngredientFood": {
             "items": {
               "type": "string"
@@ -23709,6 +23774,14 @@
             },
             "type": "array",
             "title": "Aliases",
+            "default": []
+          },
+          "substitutions": {
+            "items": {
+              "$ref": "#/components/schemas/IngredientFoodSubstitution"
+            },
+            "type": "array",
+            "title": "Substitutions",
             "default": []
           },
           "householdsWithIngredientFood": {
@@ -23831,6 +23904,76 @@
           "items"
         ],
         "title": "IngredientFoodPagination"
+      },
+      "IngredientFoodSubstitution": {
+        "properties": {
+          "substituteFoodId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Substitutefoodid"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "substituteFood": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/IngredientFoodSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "IngredientFoodSubstitution"
+      },
+      "IngredientFoodSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "pluralName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pluralname"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "IngredientFoodSummary",
+        "description": "A trimmed projection of a food, with nothing on it that can recurse.\n\nSubstitutions reference this rather than the full IngredientFood, which would make\nPydantic walk food -> substitutions -> food forever and generate an equally circular\nTypeScript type."
       },
       "IngredientReferences": {
         "properties": {
@@ -24605,6 +24748,24 @@
         ],
         "title": "NativeOIDCTokenRequest",
         "description": "An authorization code captured by a native client, for server-side exchange."
+      },
+      "NoteReference": {
+        "properties": {
+          "referenceId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Referenceid"
+          }
+        },
+        "type": "object",
+        "title": "NoteReference"
       },
       "Nutrition": {
         "properties": {
@@ -27109,6 +27270,14 @@
             ],
             "title": "Originaltext"
           },
+          "substitutions": {
+            "items": {
+              "$ref": "#/components/schemas/RecipeIngredientSubstitution"
+            },
+            "type": "array",
+            "title": "Substitutions",
+            "default": []
+          },
           "referenceId": {
             "type": "string",
             "format": "uuid",
@@ -27209,6 +27378,14 @@
             ],
             "title": "Originaltext"
           },
+          "substitutions": {
+            "items": {
+              "$ref": "#/components/schemas/RecipeIngredientSubstitution"
+            },
+            "type": "array",
+            "title": "Substitutions",
+            "default": []
+          },
           "referenceId": {
             "type": "string",
             "format": "uuid",
@@ -27217,6 +27394,45 @@
         },
         "type": "object",
         "title": "RecipeIngredient"
+      },
+      "RecipeIngredientSubstitution": {
+        "properties": {
+          "substituteFoodId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Substitutefoodid"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "substituteFood": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/IngredientFoodSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "title": "RecipeIngredientSubstitution"
       },
       "RecipeLastMade": {
         "properties": {
@@ -27241,6 +27457,11 @@
           "text": {
             "type": "string",
             "title": "Text"
+          },
+          "referenceId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Referenceid"
           }
         },
         "type": "object",
@@ -27432,6 +27653,14 @@
             "type": "array",
             "title": "Ingredientreferences",
             "default": []
+          },
+          "noteReferences": {
+            "items": {
+              "$ref": "#/components/schemas/NoteReference"
+            },
+            "type": "array",
+            "title": "Notereferences",
+            "default": []
           }
         },
         "type": "object",
@@ -27468,6 +27697,13 @@
             "type": "array",
             "title": "Missingfoods"
           },
+          "substitutedFoods": {
+            "items": {
+              "$ref": "#/components/schemas/RecipeSuggestionSubstitutedFood"
+            },
+            "type": "array",
+            "title": "Substitutedfoods"
+          },
           "missingTools": {
             "items": {
               "$ref": "#/components/schemas/RecipeTool"
@@ -27480,9 +27716,27 @@
         "required": [
           "recipe",
           "missingFoods",
+          "substitutedFoods",
           "missingTools"
         ],
         "title": "RecipeSuggestionResponseItem"
+      },
+      "RecipeSuggestionSubstitutedFood": {
+        "properties": {
+          "food": {
+            "$ref": "#/components/schemas/IngredientFood-Output"
+          },
+          "substituteFood": {
+            "$ref": "#/components/schemas/IngredientFoodSummary"
+          }
+        },
+        "type": "object",
+        "required": [
+          "food",
+          "substituteFood"
+        ],
+        "title": "RecipeSuggestionSubstitutedFood",
+        "description": "A food the recipe calls for that the user doesn't have, and the one covering it."
       },
       "RecipeSummary": {
         "properties": {
