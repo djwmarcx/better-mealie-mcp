@@ -194,3 +194,7 @@ the workflow to a specific tag (e.g. `v3.20.1`), or run it manually with a
 `mealie_tag` input (`latest`, `nightly`, or any tag).
 - A few endpoints (`list_auth_oauth*`) return 500 unless OIDC is configured on
   the Mealie side — that's Mealie behavior, not the server.
+
+## 📄 License
+
+[MIT License](./LICENSE)
