@@ -3,7 +3,7 @@
   "info": {
     "title": "Mealie",
     "description": "\nMealie is a web application for managing your recipes, meal plans, and shopping lists. This is the Restful\nAPI interactive documentation that can be used to explore the API. If you're justing getting started with\nthe API and want to get started quickly, you can use the\n[API Usage | Mealie Docs](https://docs.mealie.io/documentation/getting-started/api-usage/)\nas a reference for how to get started.\n\n\nIf you have any questions or comments about mealie, please use the discord server to talk to the developers or other\ncommunity members. If you'd like to file an issue, please use the\n[GitHub Issue Tracker | Mealie](https://github.com/mealie-recipes/mealie/issues/new/choose)\n\n\n## Helpful Links\n- [Home Page](https://mealie.io)\n- [Documentation](https://docs.mealie.io)\n- [Discord](https://discord.gg/QuStdQGSGK)\n- [Demo](https://demo.mealie.io)\n",
-    "version": "v3.26.0"
+    "version": "v3.27.0"
   },
   "paths": {
     "/api/app/about": {
@@ -5411,8 +5411,8 @@
     "/api/households/mealplans/rules": {
       "get": {
         "tags": [
-          "Households: Mealplan Rules",
-          "Households: Mealplan Rules"
+          "Households: Meal Plan Rules",
+          "Households: Meal Plan Rules"
         ],
         "summary": "Get All",
         "operationId": "get_all_api_households_mealplans_rules_get",
@@ -5557,8 +5557,8 @@
       },
       "post": {
         "tags": [
-          "Households: Mealplan Rules",
-          "Households: Mealplan Rules"
+          "Households: Meal Plan Rules",
+          "Households: Meal Plan Rules"
         ],
         "summary": "Create One",
         "operationId": "create_one_api_households_mealplans_rules_post",
@@ -5622,8 +5622,8 @@
     "/api/households/mealplans/rules/{item_id}": {
       "get": {
         "tags": [
-          "Households: Mealplan Rules",
-          "Households: Mealplan Rules"
+          "Households: Meal Plan Rules",
+          "Households: Meal Plan Rules"
         ],
         "summary": "Get One",
         "operationId": "get_one_api_households_mealplans_rules__item_id__get",
@@ -5685,8 +5685,8 @@
       },
       "put": {
         "tags": [
-          "Households: Mealplan Rules",
-          "Households: Mealplan Rules"
+          "Households: Meal Plan Rules",
+          "Households: Meal Plan Rules"
         ],
         "summary": "Update One",
         "operationId": "update_one_api_households_mealplans_rules__item_id__put",
@@ -5758,8 +5758,8 @@
       },
       "delete": {
         "tags": [
-          "Households: Mealplan Rules",
-          "Households: Mealplan Rules"
+          "Households: Meal Plan Rules",
+          "Households: Meal Plan Rules"
         ],
         "summary": "Delete One",
         "operationId": "delete_one_api_households_mealplans_rules__item_id__delete",
@@ -5823,8 +5823,8 @@
     "/api/households/mealplans": {
       "get": {
         "tags": [
-          "Households: Mealplans",
-          "Households: Mealplans"
+          "Households: Meal Plans",
+          "Households: Meal Plans"
         ],
         "summary": "Get All",
         "operationId": "get_all_api_households_mealplans_get",
@@ -6003,8 +6003,8 @@
       },
       "post": {
         "tags": [
-          "Households: Mealplans",
-          "Households: Mealplans"
+          "Households: Meal Plans",
+          "Households: Meal Plans"
         ],
         "summary": "Create One",
         "operationId": "create_one_api_households_mealplans_post",
@@ -6068,8 +6068,8 @@
     "/api/households/mealplans/today": {
       "get": {
         "tags": [
-          "Households: Mealplans",
-          "Households: Mealplans"
+          "Households: Meal Plans",
+          "Households: Meal Plans"
         ],
         "summary": "Get Todays Meals",
         "operationId": "get_todays_meals_api_households_mealplans_today_get",
@@ -6121,11 +6121,11 @@
     "/api/households/mealplans/random": {
       "post": {
         "tags": [
-          "Households: Mealplans",
-          "Households: Mealplans"
+          "Households: Meal Plans",
+          "Households: Meal Plans"
         ],
         "summary": "Create Random Meal",
-        "description": "`create_random_meal` is a route that provides the randomized functionality for mealplaners.\nIt operates by following the rules set out in the household's mealplan settings. If no settings\nare set, it will return any random meal.\n\nRefer to the mealplan settings routes for more information on how rules can be applied\nto the random meal selector.",
+        "description": "`create_random_meal` is a route that provides the randomized functionality for meal planners.\nIt operates by following the rules set out in the household's meal plan settings. If no settings\nare set, it will return any random meal.\n\nRefer to the meal plan settings routes for more information on how rules can be applied\nto the random meal selector.",
         "operationId": "create_random_meal_api_households_mealplans_random_post",
         "security": [
           {
@@ -6187,8 +6187,8 @@
     "/api/households/mealplans/{item_id}": {
       "get": {
         "tags": [
-          "Households: Mealplans",
-          "Households: Mealplans"
+          "Households: Meal Plans",
+          "Households: Meal Plans"
         ],
         "summary": "Get One",
         "operationId": "get_one_api_households_mealplans__item_id__get",
@@ -6249,8 +6249,8 @@
       },
       "put": {
         "tags": [
-          "Households: Mealplans",
-          "Households: Mealplans"
+          "Households: Meal Plans",
+          "Households: Meal Plans"
         ],
         "summary": "Update One",
         "operationId": "update_one_api_households_mealplans__item_id__put",
@@ -6321,8 +6321,8 @@
       },
       "delete": {
         "tags": [
-          "Households: Mealplans",
-          "Households: Mealplans"
+          "Households: Meal Plans",
+          "Households: Meal Plans"
         ],
         "summary": "Delete One",
         "operationId": "delete_one_api_households_mealplans__item_id__delete",
@@ -6430,6 +6430,155 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AIProviderOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/groups/ai-providers/providers/test": {
+      "post": {
+        "tags": [
+          "Groups: AI Providers",
+          "Groups: AI Providers"
+        ],
+        "summary": "Test Ai Provider",
+        "description": "Test connectivity for a provider configuration before it has been saved.",
+        "operationId": "test_ai_provider_api_groups_ai_providers_providers_test_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AIProviderCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIProviderTestResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/groups/ai-providers/providers/{provider_id}/test": {
+      "post": {
+        "tags": [
+          "Groups: AI Providers",
+          "Groups: AI Providers"
+        ],
+        "summary": "Test Saved Ai Provider",
+        "description": "Test connectivity for an already-saved provider.\n\nAccepts optional unsaved edits to test against instead of what's in the database - e.g.\nwhile editing a provider, the caller may have changed the model/base_url but left the API\nkey blank (meaning \"keep the existing one\"), so a plain \"unsaved\" test can't be used since\nit has no way to supply that key. An `overrides.apiKey` of \"\" is treated the same way: keep\nthe saved key rather than testing with an empty one.",
+        "operationId": "test_saved_ai_provider_api_groups_ai_providers_providers__provider_id__test_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "provider_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Provider Id"
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/AIProviderUpdate"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Overrides"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIProviderTestResult"
                 }
               }
             }
@@ -20381,6 +20530,41 @@
           "name"
         ],
         "title": "AIProviderSummary"
+      },
+      "AIProviderTestResult": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "supportsImages": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supportsimages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "success"
+        ],
+        "title": "AIProviderTestResult"
       },
       "AIProviderUpdate": {
         "properties": {
