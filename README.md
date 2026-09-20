@@ -100,6 +100,7 @@ Auth (set in `.env` or the environment):
 | `MEALIE_TIMEOUT` | Per-request timeout, seconds (default 60) |
 | `MEALIE_VERIFY_SSL` | Verify TLS cert; `false` to accept self-signed (default true) |
 | `MCP_SERVER_NAME` | MCP name advertised to clients (default `Mealie`) |
+| `MCP_AUTH_TOKEN` | Protect the HTTP endpoint: every request to `/mcp` must send `Authorization: Bearer <token>`. No effect in stdio mode |
 | `MEALIE_INCLUDE_TAGS` | Expose **only** these API groups, comma-separated (e.g. `recipes,organizers,foods`). Fewer tools = leaner context / fits clients that cap tool counts |
 | `MEALIE_EXCLUDE_TAGS` | Expose everything **except** these groups (e.g. `admin,households`) |
 | `MEALIE_SLIM_SCHEMAS` | Trim redundant schema noise — default `true` (see modes below) |
@@ -146,6 +147,13 @@ fastmcp run fastmcp-http.json        # via FastMCP project config (http)
 
 In `--http` mode the bind address comes from `MCP_HOST` (default `127.0.0.1`;
 the Docker image sets `0.0.0.0` so `-p` port mapping works).
+
+**HTTP auth (API key):** set `MCP_AUTH_TOKEN` to require
+`Authorization: Bearer <token>` on every request to `/mcp` (401 without it).
+Clients send the token via their HTTP headers config — e.g. Claude/Cursor
+`"headers": {"Authorization": "Bearer <token>"}` — or, in the FastMCP Python
+client, `Client("http://host:8000/mcp", auth="<token>")`. Works behind a reverse
+proxy too (set `MCP_HOST=0.0.0.0`, proxy terminates TLS).
 
 ## 🧪 Test against a local Mealie (Docker)
 

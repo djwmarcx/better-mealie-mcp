@@ -13,6 +13,8 @@ Optional knobs:
   MCP_SERVER_NAME     MCP server name advertised to clients (default "Better Mealie MCP")
   MCP_HOST            bind address in --http mode (default 127.0.0.1; the Docker
                       image sets 0.0.0.0)
+  MCP_AUTH_TOKEN      require "Authorization: Bearer <token>" on every HTTP
+                      request to /mcp (no effect in stdio mode)
 
 Run:
   uv run better-mealie-mcp              # stdio, from a source checkout
@@ -33,6 +35,7 @@ from dotenv import load_dotenv
 from fastmcp import FastMCP
 from fastmcp.server.providers.openapi import MCPType, RouteMap
 
+from .auth import BearerTokenAuth
 from .naming import build_names, normalize, slim
 
 load_dotenv()  # pick up a local .env if present
@@ -44,6 +47,9 @@ PASSWORD = os.environ.get("MEALIE_PASSWORD")
 TIMEOUT = float(os.environ.get("MEALIE_TIMEOUT", "60"))
 VERIFY_SSL = os.environ.get("MEALIE_VERIFY_SSL", "true").lower() not in ("false", "0", "no")
 SERVER_NAME = os.environ.get("MCP_SERVER_NAME", "Better Mealie MCP")
+# Require "Authorization: Bearer <MCP_AUTH_TOKEN>" on every HTTP request when
+# running in --http mode. Unset = open endpoint (local/trusted setups).
+AUTH_TOKEN = os.environ.get("MCP_AUTH_TOKEN")
 # Optional tool filtering by Mealie API group (the first path segment, e.g.
 # "recipes", "households", "admin"). Fewer tools = leaner context / fits clients
 # that cap tool counts. INCLUDE wins if both are set; unset = every endpoint.
@@ -150,6 +156,7 @@ def build_server() -> FastMCP:
         # Off by default for a lean context; set MEALIE_VALIDATE_OUTPUT=true to
         # restore structured-output schemas.
         validate_output=VALIDATE_OUTPUT,
+        auth=BearerTokenAuth(AUTH_TOKEN) if AUTH_TOKEN else None,
     )
 
 

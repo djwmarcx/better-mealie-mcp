@@ -421,6 +421,14 @@
           <input id="hosturl" type="text" spellcheck="false" value="http://localhost:8000/mcp" autocomplete="off">
         </div>
 
+        <div class="row" id="apiKeyRow" hidden>
+          <label for="apikey">API key <span class="sub">— optional; if set, every request to <code style="font-family:var(--mono)">/mcp</code> must send <code style="font-family:var(--mono)">Authorization: Bearer &lt;key&gt;</code> (401 otherwise)</span></label>
+          <div class="field">
+            <input id="apikey" type="password" spellcheck="false" placeholder="leave empty for no auth" autocomplete="off">
+            <button type="button" class="ghost" id="revApiKey">Show</button>
+          </div>
+        </div>
+
         <div class="row">
           <label>Authentication</label>
           <div class="seg" id="authmode" role="group" aria-label="Auth mode">
@@ -563,7 +571,7 @@
     url:"http://localhost:9925",
     path:"/path/to/better-mealie-mcp",
     hosturl:"http://localhost:8000/mcp",
-    token:"", user:"", pass:"", tags:[], ctx:"lean",
+    token:"", user:"", pass:"", apikey:"", tags:[], ctx:"lean",
   };
 
   const $ = s => document.querySelector(s);
@@ -674,13 +682,13 @@
 
   const bindInput = (sel, key) => $(sel).addEventListener("input", e => { state[key] = e.target.value; render(); });
   bindInput("#url","url"); bindInput("#path","path"); bindInput("#hosturl","hosturl");
-  bindInput("#token","token"); bindInput("#user","user"); bindInput("#pass","pass");
+  bindInput("#token","token"); bindInput("#user","user"); bindInput("#pass","pass"); bindInput("#apikey","apikey");
 
   const reveal = (btnSel, inSel) => $(btnSel).addEventListener("click", () => {
     const i = $(inSel); const show = i.type === "password";
     i.type = show ? "text" : "password"; $(btnSel).textContent = show ? "Hide" : "Show";
   });
-  reveal("#revToken","#token"); reveal("#revPass","#pass");
+  reveal("#revToken","#token"); reveal("#revPass","#pass"); reveal("#revApiKey","#apikey");
 
   function syncClient() {
     clientsEl.querySelectorAll(".client").forEach(b => b.setAttribute("aria-pressed", b.dataset.id === state.client));
@@ -705,6 +713,7 @@
     // the repo path only matters when running from a source checkout
     $("#pathRow").hidden = !stdio || state.method !== "source";
     $("#hostRow").hidden = stdio;
+    $("#apiKeyRow").hidden = stdio;
   }
   function syncAuth() {
     const tok = state.auth === "token";
@@ -719,6 +728,8 @@
     if (state.auth === "token") p.push(["MEALIE_API_TOKEN", state.token || "YOUR_API_TOKEN"]);
     else { p.push(["MEALIE_USERNAME", state.user || "changeme@example.com"]); p.push(["MEALIE_PASSWORD", state.pass || "MyPassword"]); }
     if (state.tags.length) p.push(["MEALIE_INCLUDE_TAGS", state.tags.join(",")]);
+    // Only meaningful over HTTP; stdio ignores it, so keep the env clean.
+    if (state.transport === "http" && state.apikey) p.push(["MCP_AUTH_TOKEN", state.apikey]);
     // Lean is the server default → only emit vars for the other two modes.
     if (state.ctx === "leanest") p.push(["MEALIE_SLIM_AGGRESSIVE", "true"]);
     else if (state.ctx === "full") { p.push(["MEALIE_SLIM_SCHEMAS", "false"]); p.push(["MEALIE_VALIDATE_OUTPUT", "true"]); }
@@ -793,6 +804,11 @@
       return `docker run --rm -p 8000:8000 \\\n  ${env.map(([k,v]) => `-e ${k}=${v}`).join(" \\\n  ")} \\\n  ${IMAGE} --http 8000`;
     return `${envLine} \\\n  uv run --directory ${state.path || DEFPATH} server.py --http 8000`;
   }
+  // Bearer header for generated HTTP client configs when an API key is set.
+  function httpAuthExtra() {
+    return state.transport === "http" && state.apikey
+      ? { headers: { Authorization: `Bearer ${state.apikey}` } } : {};
+  }
 
   // ---- syntax-highlight helpers ----
   // Single-pass: the replacer output is never re-scanned, so injected <span>
@@ -830,7 +846,7 @@
     else if (state.client === "vscode") {
       const server = state.transport === "stdio"
         ? { type:"stdio", ...stdioCmd(env), env:Object.fromEntries(env) }
-        : { type:"http", url:state.hosturl || "http://localhost:8000/mcp" };
+        : { type:"http", url:state.hosturl || "http://localhost:8000/mcp", ...httpAuthExtra() };
       blocks.push({ lbl:c.file, code:true, json:true, html: hlJson({ servers:{ [ALIAS]:server } }) });
     }
     else if (state.client === "chatgpt") {
@@ -839,7 +855,7 @@
     else { // claude-desktop, cursor, gemini  → mcpServers JSON
       const server = state.transport === "stdio"
         ? { ...stdioCmd(env), env:Object.fromEntries(env) }
-        : { url:state.hosturl || "http://localhost:8000/mcp" };
+        : { url:state.hosturl || "http://localhost:8000/mcp", ...httpAuthExtra() };
       const key = state.transport === "stdio" ? "mcpServers"
                 : (state.client === "gemini" ? "mcpServers" : "mcpServers");
       const label = state.transport === "http" ? c.file + "  (add url entry)" : c.file;
@@ -873,6 +889,7 @@
 
     if (state.method === "docker" && /localhost|127\.0\.0\.1/.test(state.url)) n.push(`<span class="warn">Docker can't reach <code>localhost</code> on your machine.</span> If Mealie runs on this host, use <code>http://host.docker.internal:9925</code> (macOS/Windows) or your host's LAN IP (Linux) as the Mealie base URL.`);
     if (state.transport === "http") n.push(`Keep the server process running — the client connects to it over HTTP at <code>${esc(state.hosturl||"http://localhost:8000/mcp")}</code>.`);
+    if (state.transport === "http" && state.apikey) n.push(`<code>MCP_AUTH_TOKEN</code> is baked into the <b>1 · start the HTTP server</b> command and the client <code>headers</code> — any request without <code>Authorization: Bearer ${esc(state.apikey)}</code> is rejected with <code>401</code>. Use a fresh random string (<code>openssl rand -hex 32</code>) and keep it secret.`);
     if (state.auth === "token") n.push(state.token ? `Token embedded above.` : `No token entered yet — the placeholder <code>YOUR_API_TOKEN</code> is shown. Paste yours to bake it in.`);
     else n.push(`Server logs in with these credentials at startup to fetch a token. An API token is preferred for anything long-lived.`);
     return n.map(x => `<p>${x}</p>`).join("");
