@@ -5,9 +5,6 @@ server runs over HTTP, every request to /mcp must authenticate. The
 mechanisms are:
 
 - ``key``       — a single pre-shared API key sent as ``Authorization: Bearer <key>``
-- ``oauth``     — a built-in OAuth 2.1 authorization server (DCR + PKCE) so
-  clients like ChatGPT and Claude can run their usual "sign in" connector
-  flow; auto-approves every request, so only use on non-public URLs
 - ``authentik`` — validate tokens issued by an external Authentik (OIDC)
   authorization server, so /mcp accepts only tokens Authentik actually issued
   to your users. Full RFC 9728 protected-resource metadata routes, no
@@ -15,7 +12,10 @@ mechanisms are:
 - ``both``      — accept an Authentik OIDC token *or* the pre-shared API key
   (per-user logins for interactive clients, the key for scripts/services)
 
-STDIO transport is unaffected (it inherits security from the local environment).
+The built-in OAuth 2.1 server is intentionally gone: FastMCP's in-memory
+provider auto-approves every authorization request, so it imposed no access
+control. Spec-aware clients reach a real identity provider via the RFC 9728
+metadata routes ("authentik").
 """
 
 from __future__ import annotations
@@ -58,28 +58,6 @@ class BearerTokenAuth(AuthProvider):
             subject="mcp-client",
             scopes=[],
         )
-
-
-def _oauth_provider(public_url: str) -> AuthProvider:
-    """Build a self-contained OAuth 2.1 authorization server.
-
-    Uses FastMCP's in-memory provider: clients register dynamically (DCR) and
-    the authorization step auto-approves, so no external identity provider is
-    needed. Clients, tokens and refresh tokens live in process memory only —
-    they are dropped on restart and clients simply re-authorize.
-
-    .. warning::
-        Auto-approval means anyone who can reach ``/authorize`` obtains a
-        token. Only use this on a URL that is not publicly reachable, or front
-        it with an identity provider. See the README.
-    """
-    from fastmcp.server.auth.auth import ClientRegistrationOptions
-    from fastmcp.server.auth.providers.in_memory import InMemoryOAuthProvider
-
-    return InMemoryOAuthProvider(
-        base_url=public_url.rstrip("/"),
-        client_registration_options=ClientRegistrationOptions(enabled=True),
-    )
 
 
 class AuthentikTokenVerifier(TokenVerifier):
@@ -231,16 +209,13 @@ def build_auth() -> AuthProvider | None:
 
     - ``none``      — no auth; open endpoint for trusted/local setups
     - ``key``       — require ``MCP_AUTH_TOKEN`` as ``Authorization: Bearer <token>``
-    - ``oauth``     — run the built-in OAuth 2.1 authorization server (open,
-      auto-approving; for clients that only speak OAuth)
     - ``authentik`` — validate OIDC access tokens issued by an external
       Authentik server (per-user access; no auto-approval)
     - ``both``      — accept an Authentik OIDC token *or* ``MCP_AUTH_TOKEN``
 
-    ``oauth`` / ``authentik`` / ``both`` need ``MCP_PUBLIC_BASE_URL`` so
-    discovery metadata and redirect URIs resolve correctly. ``authentik`` and
-    ``both`` need ``MCP_AUTH_ISSUER``; ``key`` and ``both`` need
-    ``MCP_AUTH_TOKEN``.
+    ``authentik`` / ``both`` need ``MCP_PUBLIC_BASE_URL`` so discovery
+    metadata resolves correctly, and ``MCP_AUTH_ISSUER``; ``key`` / ``both``
+    need ``MCP_AUTH_TOKEN``.
     """
     mode = os.environ.get("MCP_AUTH_MODE", "none").strip().lower()
     token = os.environ.get("MCP_AUTH_TOKEN")
@@ -265,11 +240,7 @@ def build_auth() -> AuthProvider | None:
             verifiers=[BearerTokenAuth(token)],
             required_scopes=[],
         )
-    if mode != "oauth":
-        raise SystemExit(
-            f"Invalid MCP_AUTH_MODE={mode!r}. "
-            "Use 'none', 'key', 'oauth', 'both' or 'authentik'."
-        )
-    if not public_url:
-        raise SystemExit(f"MCP_AUTH_MODE={mode!r} requires MCP_PUBLIC_BASE_URL.")
-    return _oauth_provider(public_url)
+    raise SystemExit(
+        f"Invalid MCP_AUTH_MODE={mode!r}. "
+        "Use 'none', 'key', 'both' or 'authentik'."
+    )
