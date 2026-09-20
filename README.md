@@ -100,7 +100,9 @@ Auth (set in `.env` or the environment):
 | `MEALIE_TIMEOUT` | Per-request timeout, seconds (default 60) |
 | `MEALIE_VERIFY_SSL` | Verify TLS cert; `false` to accept self-signed (default true) |
 | `MCP_SERVER_NAME` | MCP name advertised to clients (default `Mealie`) |
-| `MCP_AUTH_TOKEN` | Protect the HTTP endpoint: every request to `/mcp` must send `Authorization: Bearer <token>`. No effect in stdio mode |
+| `MCP_AUTH_MODE` | HTTP endpoint auth: `none` *(default)* \| `key` \| `oauth` \| `both`. No effect in stdio mode |
+| `MCP_AUTH_TOKEN` | API key for `key`/`both`: reject every request to `/mcp` without `Authorization: Bearer <token>` |
+| `MCP_PUBLIC_BASE_URL` | Public HTTPS URL (clients' view) needed by `oauth`/`both` for OAuth discovery &amp; redirects |
 | `MEALIE_INCLUDE_TAGS` | Expose **only** these API groups, comma-separated (e.g. `recipes,organizers,foods`). Fewer tools = leaner context / fits clients that cap tool counts |
 | `MEALIE_EXCLUDE_TAGS` | Expose everything **except** these groups (e.g. `admin,households`) |
 | `MEALIE_SLIM_SCHEMAS` | Trim redundant schema noise — default `true` (see modes below) |
@@ -148,12 +150,30 @@ fastmcp run fastmcp-http.json        # via FastMCP project config (http)
 In `--http` mode the bind address comes from `MCP_HOST` (default `127.0.0.1`;
 the Docker image sets `0.0.0.0` so `-p` port mapping works).
 
-**HTTP auth (API key):** set `MCP_AUTH_TOKEN` to require
-`Authorization: Bearer <token>` on every request to `/mcp` (401 without it).
-Clients send the token via their HTTP headers config — e.g. Claude/Cursor
-`"headers": {"Authorization": "Bearer <token>"}` — or, in the FastMCP Python
-client, `Client("http://host:8000/mcp", auth="<token>")`. Works behind a reverse
-proxy too (set `MCP_HOST=0.0.0.0`, proxy terminates TLS).
+**HTTP auth:** `MCP_AUTH_MODE` picks the mechanism (default `none`, no effect on
+stdio):
+
+- `none` — open endpoint (trusted/local setups only; this is also the default
+  when `MCP_AUTH_MODE` is unset — auth is opt-in)
+- `key` — require `Authorization: Bearer <MCP_AUTH_TOKEN>` on every request to
+  `/mcp` (401 without it). Clients send the token in headers config — e.g.
+  Claude/Cursor `"headers": {"Authorization": "Bearer <token>"}` — or, in the
+  FastMCP Python client, `Client("http://host:8000/mcp", auth="<token>")`.
+- `oauth` — run a built-in OAuth 2.1 authorization server (dynamic client
+  registration + PKCE) so ChatGPT/Claude/etc. can use their standard "sign in"
+  connector flow against `/mcp`. No external identity provider needed.
+- `both` — accept an OAuth access token **or** the pre-shared API key.
+
+`oauth` / `both` require `MCP_PUBLIC_BASE_URL` (public HTTPS URL the client
+reaches you on) so discovery metadata and redirect URIs resolve; `key` / `both`
+require `MCP_AUTH_TOKEN` — setting just the token does nothing unless the mode
+asks for it. All modes work behind a reverse proxy (set `MCP_HOST=0.0.0.0`,
+proxy terminates TLS).
+
+> **Warning:** the built-in OAuth server auto-approves every authorization
+> request, so anyone who can reach `/authorize` gets a token. Only expose the
+> `oauth` mode on a URL that is not publicly reachable — put it behind VPN/auth
+> gateways — or use `key`/`both` for public deployments.
 
 ## 🧪 Test against a local Mealie (Docker)
 
