@@ -100,9 +100,13 @@ Auth (set in `.env` or the environment):
 | `MEALIE_TIMEOUT` | Per-request timeout, seconds (default 60) |
 | `MEALIE_VERIFY_SSL` | Verify TLS cert; `false` to accept self-signed (default true) |
 | `MCP_SERVER_NAME` | MCP name advertised to clients (default `Mealie`) |
-| `MCP_AUTH_MODE` | HTTP endpoint auth: `none` *(default)* \| `key` \| `oauth` \| `both`. No effect in stdio mode |
+| `MCP_AUTH_MODE` | HTTP endpoint auth: `none` *(default)* \| `key` \| `oauth` \| `both` \| `authentik`. No effect in stdio mode |
 | `MCP_AUTH_TOKEN` | API key for `key`/`both`: reject every request to `/mcp` without `Authorization: Bearer <token>` |
-| `MCP_PUBLIC_BASE_URL` | Public HTTPS URL (clients' view) needed by `oauth`/`both` for OAuth discovery &amp; redirects |
+| `MCP_PUBLIC_BASE_URL` | Public HTTPS URL (clients' view) needed by `oauth`/`both`/`authentik` for discovery metadata |
+| `MCP_AUTH_ISSUER` | Authentik OIDC issuer URL (required for `authentik`), e.g. `https://auth.example/application/o/mealie/` |
+| `MCP_AUTH_AUDIENCE` | Authentik token `aud` to require (optional, typically the provider's client id) |
+| `MCP_AUTH_SCOPES` | Authentik scopes a token must carry (optional, comma-separated) |
+| `MCP_AUTH_DISCOVERY_URL` | Override Authentik's OIDC discovery document URL (optional) |
 | `MEALIE_INCLUDE_TAGS` | Expose **only** these API groups, comma-separated (e.g. `recipes,organizers,foods`). Fewer tools = leaner context / fits clients that cap tool counts |
 | `MEALIE_EXCLUDE_TAGS` | Expose everything **except** these groups (e.g. `admin,households`) |
 | `MEALIE_SLIM_SCHEMAS` | Trim redundant schema noise — default `true` (see modes below) |
@@ -163,12 +167,38 @@ stdio):
   registration + PKCE) so ChatGPT/Claude/etc. can use their standard "sign in"
   connector flow against `/mcp`. No external identity provider needed.
 - `both` — accept an OAuth access token **or** the pre-shared API key.
+- `authentik` — validate access tokens issued by **your** Authentik server
+  (OIDC + JWKS), so only your Authentik users can call `/mcp`. Usually the best
+  fit when an Authentik instance is already in front of Mealie.
 
-`oauth` / `both` require `MCP_PUBLIC_BASE_URL` (public HTTPS URL the client
-reaches you on) so discovery metadata and redirect URIs resolve; `key` / `both`
-require `MCP_AUTH_TOKEN` — setting just the token does nothing unless the mode
-asks for it. All modes work behind a reverse proxy (set `MCP_HOST=0.0.0.0`,
-proxy terminates TLS).
+`oauth` / `both` / `authentik` require `MCP_PUBLIC_BASE_URL` (public HTTPS URL
+the client reaches you on) so discovery metadata and redirect URIs resolve;
+`key` / `both` require `MCP_AUTH_TOKEN` — setting just the token does nothing
+unless the mode asks for it. All modes work behind a reverse proxy (set
+`MCP_HOST=0.0.0.0`, proxy terminates TLS).
+
+### Authentik mode (`authentik`)
+
+Replace the built-in auto-approving OAuth server with a real identity provider.
+Set `MCP_AUTH_MODE=authentik`, `MCP_PUBLIC_BASE_URL`, and
+`MCP_AUTH_ISSUER` (the OIDC issuer of the Authentik OAuth2/OIDC provider for
+your app, e.g. `https://auth.example/application/o/mealie/`). Optionally pin the
+expected token `MCP_AUTH_AUDIENCE` (usually the provider's client id) and
+required `MCP_AUTH_SCOPES`.
+
+The server then validates the RS256 signature, expiry, issuer, audience and
+scopes of every bearer token against Authentik's JWKS (fetched from
+`MCP_AUTH_ISSUER/.well-known/openid-configuration`; override with
+`MCP_AUTH_DISCOVERY_URL`), and advertises RFC 9728 protected-resource metadata
+at `/.well-known/oauth-protected-resource` so spec-aware clients discover
+Authentik automatically. Sign up a new OAuth2/OIDC provider:
+Authentik → Applications → you app → Provide → OIDC, note its client id/secret,
+and configure that application in your AI tool's connector settings instead of
+this server.
+
+> **Tip:** if the access token your AI tool receives does not include the
+> client id in `aud`, omit `MCP_AUTH_AUDIENCE` (issuer + signature are usually
+> enough).
 
 > **Warning:** the built-in OAuth server auto-approves every authorization
 > request, so anyone who can reach `/authorize` gets a token. Only expose the

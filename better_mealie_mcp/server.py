@@ -13,12 +13,15 @@ Optional knobs:
   MCP_SERVER_NAME     MCP server name advertised to clients (default "Better Mealie MCP")
   MCP_HOST            bind address in --http mode (default 127.0.0.1; the Docker
                       image sets 0.0.0.0)
-  MCP_AUTH_MODE       HTTP auth: "none" (default) | "key" | "oauth" | "both"
+  MCP_AUTH_MODE       HTTP auth: "none" (default) | "key" | "oauth" | "both" |
+                      "authentik"
   MCP_AUTH_TOKEN      API key required in "key"/"both" modes as
                       "Authorization: Bearer <token>" on every HTTP request to
                       /mcp (no effect in stdio mode)
-  MCP_PUBLIC_BASE_URL public HTTPS URL needed by "oauth"/"both" modes so the
-                      built-in OAuth 2.1 authorization server resolves correctly
+  MCP_PUBLIC_BASE_URL public HTTPS URL needed by "oauth"/"both"/"authentik"
+                      modes so discovery metadata resolves correctly
+  MCP_AUTH_ISSUER     Authentik OIDC issuer URL (required for "authentik");
+                      also MCP_AUTH_AUDIENCE / MCP_AUTH_SCOPES / MCP_AUTH_DISCOVERY_URL
 
 Run:
   uv run better-mealie-mcp              # stdio, from a source checkout
