@@ -100,10 +100,10 @@ Auth (set in `.env` or the environment):
 | `MEALIE_TIMEOUT` | Per-request timeout, seconds (default 60) |
 | `MEALIE_VERIFY_SSL` | Verify TLS cert; `false` to accept self-signed (default true) |
 | `MCP_SERVER_NAME` | MCP name advertised to clients (default `Mealie`) |
-| `MCP_AUTH_MODE` | HTTP endpoint auth: `none` *(default)* \| `key` \| `oauth` \| `both` \| `authentik`. No effect in stdio mode |
+| `MCP_AUTH_MODE` | HTTP endpoint auth: `none` *(default)* \| `key` \| `oauth` \| `authentik` \| `both` (= Authentik token or API key). No effect in stdio mode |
 | `MCP_AUTH_TOKEN` | API key for `key`/`both`: reject every request to `/mcp` without `Authorization: Bearer <token>` |
 | `MCP_PUBLIC_BASE_URL` | Public HTTPS URL (clients' view) needed by `oauth`/`both`/`authentik` for discovery metadata |
-| `MCP_AUTH_ISSUER` | Authentik OIDC issuer URL (required for `authentik`), e.g. `https://auth.example/application/o/mealie/` |
+| `MCP_AUTH_ISSUER` | Authentik OIDC issuer URL (required for `authentik`/`both`), e.g. `https://auth.example/application/o/mealie/` |
 | `MCP_AUTH_AUDIENCE` | Authentik token `aud` to require (optional, typically the provider's client id) |
 | `MCP_AUTH_SCOPES` | Authentik scopes a token must carry (optional, comma-separated) |
 | `MCP_AUTH_DISCOVERY_URL` | Override Authentik's OIDC discovery document URL (optional) |
@@ -165,17 +165,20 @@ stdio):
   FastMCP Python client, `Client("http://host:8000/mcp", auth="<token>")`.
 - `oauth` — run a built-in OAuth 2.1 authorization server (dynamic client
   registration + PKCE) so ChatGPT/Claude/etc. can use their standard "sign in"
-  connector flow against `/mcp`. No external identity provider needed.
-- `both` — accept an OAuth access token **or** the pre-shared API key.
+  connector flow against `/mcp`. No external identity provider needed. **Open**
+  (auto-approves) — see the warning below.
 - `authentik` — validate access tokens issued by **your** Authentik server
   (OIDC + JWKS), so only your Authentik users can call `/mcp`. Usually the best
   fit when an Authentik instance is already in front of Mealie.
+- `both` — accept an Authentik token **or** the pre-shared API key: Authentik
+  for interactive clients, the key for scripts/services.
 
-`oauth` / `both` / `authentik` require `MCP_PUBLIC_BASE_URL` (public HTTPS URL
+`oauth` / `authentik` / `both` require `MCP_PUBLIC_BASE_URL` (public HTTPS URL
 the client reaches you on) so discovery metadata and redirect URIs resolve;
-`key` / `both` require `MCP_AUTH_TOKEN` — setting just the token does nothing
-unless the mode asks for it. All modes work behind a reverse proxy (set
-`MCP_HOST=0.0.0.0`, proxy terminates TLS).
+`authentik` / `both` require `MCP_AUTH_ISSUER`; `key` / `both` require
+`MCP_AUTH_TOKEN` — setting just the token does nothing unless the mode asks for
+it. All modes work behind a reverse proxy (set `MCP_HOST=0.0.0.0`, proxy
+terminates TLS).
 
 ### Authentik mode (`authentik`)
 
@@ -199,6 +202,10 @@ this server.
 > **Tip:** if the access token your AI tool receives does not include the
 > client id in `aud`, omit `MCP_AUTH_AUDIENCE` (issuer + signature are usually
 > enough).
+
+`both` reuses this exact setup — set `MCP_AUTH_MODE=both` and additionally
+provide `MCP_AUTH_TOKEN` to also accept the pre-shared key (e.g. for
+scripts/tools that can't run the connector flow).
 
 > **Warning:** the built-in OAuth server auto-approves every authorization
 > request, so anyone who can reach `/authorize` gets a token. Only expose the

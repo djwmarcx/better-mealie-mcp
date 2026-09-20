@@ -8,11 +8,12 @@ mechanisms are:
 - ``oauth``     — a built-in OAuth 2.1 authorization server (DCR + PKCE) so
   clients like ChatGPT and Claude can run their usual "sign in" connector
   flow; auto-approves every request, so only use on non-public URLs
-- ``both``      — accept an OAuth access token *or* the pre-shared API key
 - ``authentik`` — validate tokens issued by an external Authentik (OIDC)
   authorization server, so /mcp accepts only tokens Authentik actually issued
   to your users. Full RFC 9728 protected-resource metadata routes, no
   auto-approval.
+- ``both``      — accept an Authentik OIDC token *or* the pre-shared API key
+  (per-user logins for interactive clients, the key for scripts/services)
 
 STDIO transport is unaffected (it inherits security from the local environment).
 """
@@ -230,14 +231,16 @@ def build_auth() -> AuthProvider | None:
 
     - ``none``      — no auth; open endpoint for trusted/local setups
     - ``key``       — require ``MCP_AUTH_TOKEN`` as ``Authorization: Bearer <token>``
-    - ``oauth``     — run the built-in OAuth 2.1 authorization server
-    - ``both``      — accept an OAuth access token or the pre-shared API key
+    - ``oauth``     — run the built-in OAuth 2.1 authorization server (open,
+      auto-approving; for clients that only speak OAuth)
     - ``authentik`` — validate OIDC access tokens issued by an external
       Authentik server (per-user access; no auto-approval)
+    - ``both``      — accept an Authentik OIDC token *or* ``MCP_AUTH_TOKEN``
 
-    ``oauth`` / ``both`` / ``authentik`` need ``MCP_PUBLIC_BASE_URL`` so
-    discovery metadata and redirect URIs resolve correctly. ``both`` also
-    needs ``MCP_AUTH_TOKEN``; ``authentik`` needs ``MCP_AUTH_ISSUER``.
+    ``oauth`` / ``authentik`` / ``both`` need ``MCP_PUBLIC_BASE_URL`` so
+    discovery metadata and redirect URIs resolve correctly. ``authentik`` and
+    ``both`` need ``MCP_AUTH_ISSUER``; ``key`` and ``both`` need
+    ``MCP_AUTH_TOKEN``.
     """
     mode = os.environ.get("MCP_AUTH_MODE", "none").strip().lower()
     token = os.environ.get("MCP_AUTH_TOKEN")
@@ -247,21 +250,26 @@ def build_auth() -> AuthProvider | None:
         return None
     if mode == "key":
         return BearerTokenAuth(token) if token else None
-    if mode == "authentik":
+    if mode in ("authentik", "both"):
         if not public_url:
             raise SystemExit(f"MCP_AUTH_MODE={mode!r} requires MCP_PUBLIC_BASE_URL.")
-        return _authentik_provider(public_url)
-    if mode not in ("oauth", "both"):
+        server = _authentik_provider(public_url)
+        if mode == "authentik":
+            return server
+        if not token:
+            raise SystemExit("MCP_AUTH_MODE='both' requires MCP_AUTH_TOKEN.")
+        # The Authentik verifier still enforces scopes on real tokens; the API
+        # key is exempt from the scope gate, so the outer middleware gets none.
+        return MultiAuth(
+            server=server,
+            verifiers=[BearerTokenAuth(token)],
+            required_scopes=[],
+        )
+    if mode != "oauth":
         raise SystemExit(
             f"Invalid MCP_AUTH_MODE={mode!r}. "
             "Use 'none', 'key', 'oauth', 'both' or 'authentik'."
         )
     if not public_url:
         raise SystemExit(f"MCP_AUTH_MODE={mode!r} requires MCP_PUBLIC_BASE_URL.")
-
-    oauth = _oauth_provider(public_url)
-    if mode == "oauth":
-        return oauth
-    if not token:
-        raise SystemExit("MCP_AUTH_MODE='both' requires MCP_AUTH_TOKEN.")
-    return MultiAuth(server=oauth, verifiers=[BearerTokenAuth(token)])
+    return _oauth_provider(public_url)

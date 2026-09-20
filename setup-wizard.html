@@ -745,12 +745,12 @@
   function syncMcpAuth() {
     const http = state.transport === "http";
     const keyLike = state.mcpauth === "key" || state.mcpauth === "both";
-    const oauthLike = state.mcpauth === "oauth" || state.mcpauth === "both" || state.mcpauth === "authentik";
-    const authk = state.mcpauth === "authentik";
+    const authzLike = state.mcpauth === "oauth" || state.mcpauth === "authentik" || state.mcpauth === "both";
+    const authkLike = state.mcpauth === "authentik" || state.mcpauth === "both";
     $("#apiKeyRow").hidden = !http || !keyLike;
-    $("#pubRow").hidden = !http || !oauthLike;
-    $("#issuerRow").hidden = !http || !authk;
-    $("#audRow").hidden = !http || !authk;
+    $("#pubRow").hidden = !http || !authzLike;
+    $("#issuerRow").hidden = !http || !authkLike;
+    $("#audRow").hidden = !http || !authkLike;
   }
   function syncAuth() {
     const tok = state.auth === "token";
@@ -768,22 +768,22 @@
     // HTTP auth: only meaningful over HTTP; stdio ignores these, so keep the
     // env clean. Emit MCP_AUTH_MODE only when it changes the server default.
     if (state.transport === "http" && state.mcpauth !== "none") {
-      if (state.mcpauth === "authentik") {
-        if (state.issuer) {
-          p.push(["MCP_AUTH_MODE", "authentik"]);
-          if (state.puburl) p.push(["MCP_PUBLIC_BASE_URL", state.puburl]);
+      if (state.mcpauth === "oauth") {
+        if (state.puburl) {
+          p.push(["MCP_AUTH_MODE", "oauth"]);
+          p.push(["MCP_PUBLIC_BASE_URL", state.puburl]);
+        }
+      } else if (state.mcpauth === "authentik" || state.mcpauth === "both") {
+        if (state.puburl && state.issuer) {
+          p.push(["MCP_AUTH_MODE", state.mcpauth]);
+          p.push(["MCP_PUBLIC_BASE_URL", state.puburl]);
           p.push(["MCP_AUTH_ISSUER", state.issuer]);
           if (state.audience) p.push(["MCP_AUTH_AUDIENCE", state.audience]);
+          if (state.mcpauth === "both" && state.apikey) p.push(["MCP_AUTH_TOKEN", state.apikey]);
         }
-      } else {
-        const keyLike = state.mcpauth === "key" || state.mcpauth === "both";
-        const oauthLike = state.mcpauth === "oauth" || state.mcpauth === "both";
-        if (oauthLike) {
-          p.push(["MCP_AUTH_MODE", state.mcpauth]);
-          if (state.puburl) p.push(["MCP_PUBLIC_BASE_URL", state.puburl]);
-        }
-        if (keyLike && state.apikey) {
-          if (!oauthLike) p.push(["MCP_AUTH_MODE", "key"]);
+      } else if (state.mcpauth === "key") {
+        if (state.apikey) {
+          p.push(["MCP_AUTH_MODE", "key"]);
           p.push(["MCP_AUTH_TOKEN", state.apikey]);
         }
       }
@@ -949,9 +949,9 @@
     if (state.method === "docker" && /localhost|127\.0\.0\.1/.test(state.url)) n.push(`<span class="warn">Docker can't reach <code>localhost</code> on your machine.</span> If Mealie runs on this host, use <code>http://host.docker.internal:9925</code> (macOS/Windows) or your host's LAN IP (Linux) as the Mealie base URL.`);
     if (state.transport === "http") n.push(`Keep the server process running — the client connects to it over HTTP at <code>${esc(state.hosturl||"http://localhost:8000/mcp")}</code>.`);
     if (state.transport === "http" && state.mcpauth === "oauth") n.push(`<span class="warn">Built-in OAuth auto-approves every authorization request.</span> Anyone who can reach the server gets a token — only expose <code>oauth</code> on a non-public URL (VPN/auth-gated). Set <code>MCP_PUBLIC_BASE_URL</code> to the public HTTPS URL; ChatGPT/Claude then run their normal "sign in" connector flow against <code>/mcp</code>.`);
-    if (state.transport === "http" && state.mcpauth === "authentik") n.push(`<span class="warn">Use your Authentik as the login.</span> Create an OAuth2/OIDC provider in Authentik for the AI tool and paste its issuer above — the server then only accepts tokens Authentik issued, so access is tied to your Authentik users. Configure that provider (client id/secret) in your AI tool's connector settings.`);
+    if (state.transport === "http" && state.mcpauth === "authentik" || state.transport === "http" && state.mcpauth === "both") n.push(`<span class="warn">Use your Authentik as the login.</span> Create an OAuth2/OIDC provider in Authentik for the AI tool and paste its issuer above — the server then only accepts tokens Authentik issued, so access is tied to your Authentik users. Configure that provider (client id/secret) in your AI tool's connector settings.`);
     const keyLike = state.mcpauth === "key" || state.mcpauth === "both";
-    if (state.transport === "http" && state.mcpauth === "both") n.push(`<code>MCP_AUTH_MODE=both</code> accepts an OAuth access token <b>or</b> the API key, so the unmodified key below still works while OAuth clients sign in.`);
+    if (state.transport === "http" && keyLike && state.apikey && state.mcpauth !== "key") n.push(`<code>MCP_AUTH_MODE=${state.mcpauth}</code> also accepts the API key below, so scripts keep working while Authentik users sign in.`);
     if (state.transport === "http" && state.mcpauth === "none") n.push(`HTTP auth is off — anyone who can reach the URL can call the server. Fine for trusted/local setups; use <code>key</code> or <code>both</code> for anything public.`);
     if (state.transport === "http" && keyLike && state.apikey) n.push(`<code>MCP_AUTH_TOKEN</code> is baked into the <b>1 · start the HTTP server</b> command and the client <code>headers</code> — any request without <code>Authorization: Bearer ${esc(state.apikey)}</code> is rejected with <code>401</code>. Use a fresh random string (<code>openssl rand -hex 32</code>) and keep it secret.`);
     if (state.auth === "token") n.push(state.token ? `Token embedded above.` : `No token entered yet — the placeholder <code>YOUR_API_TOKEN</code> is shown. Paste yours to bake it in.`);
