@@ -1,6 +1,6 @@
 # Better Mealie MCP — Tool Reference
 
-**264 tools**, auto-generated from Mealie's OpenAPI spec. Every endpoint included, none excluded.
+**266 tools**, auto-generated from Mealie's OpenAPI spec. Every endpoint included, none excluded.
 
 ## `admin` (38)
 
@@ -106,11 +106,13 @@
 | `update_foods_by_item` | PUT | `/api/foods/{item_id}` |
 | `update_foods_merge` | PUT | `/api/foods/merge` |
 
-## `groups` (26)
+## `groups` (28)
 
 | tool | method | path |
 |------|--------|------|
 | `create_groups_ai_providers_providers` | POST | `/api/groups/ai-providers/providers` |
+| `create_groups_ai_providers_providers_by_provider_test` | POST | `/api/groups/ai-providers/providers/{provider_id}/test` |
+| `create_groups_ai_providers_providers_test` | POST | `/api/groups/ai-providers/providers/test` |
 | `create_groups_labels` | POST | `/api/groups/labels` |
 | `create_groups_migrations` | POST | `/api/groups/migrations` |
 | `create_groups_seeders_foods` | POST | `/api/groups/seeders/foods` |
