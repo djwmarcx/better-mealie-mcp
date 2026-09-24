@@ -421,6 +421,38 @@
           <input id="hosturl" type="text" spellcheck="false" value="http://localhost:8000/mcp" autocomplete="off">
         </div>
 
+        <div class="row" id="mcpauthRow" hidden>
+          <label>HTTP auth <span class="sub">— how clients authenticate to <code style="font-family:var(--mono)">/mcp</code></span></label>
+          <div class="seg" id="mcpauth" role="group" aria-label="HTTP auth mode">
+            <button type="button" data-v="key" aria-pressed="false">API key</button>
+            <button type="button" data-v="authentik" aria-pressed="false">Authentik</button>
+            <button type="button" data-v="both" aria-pressed="false">Both</button>
+            <button type="button" data-v="none" aria-pressed="true">None</button>
+          </div>
+        </div>
+
+        <div class="row" id="apiKeyRow" hidden>
+          <label for="apikey">API key <span class="sub">— optional; requests to <code style="font-family:var(--mono)">/mcp</code> must send <code style="font-family:var(--mono)">Authorization: Bearer &lt;key&gt;</code> (401 otherwise)</span></label>
+          <div class="field">
+            <input id="apikey" type="password" spellcheck="false" placeholder="use a fresh random string (openssl rand -hex 32)" autocomplete="off">
+            <button type="button" class="ghost" id="revApiKey">Show</button>
+          </div>
+        </div>
+
+        <div class="row" id="pubRow" hidden>
+          <label for="puburl">Public base URL <span class="sub">— the public HTTPS URL clients reach the server on, used for OAuth discovery &amp; redirects</span></label>
+          <input id="puburl" type="text" spellcheck="false" placeholder="https://mcp.example.com" autocomplete="off">
+        </div>
+
+        <div class="row" id="issuerRow" hidden>
+          <label for="issuer">Authentik issuer <span class="sub">— your OIDC provider URL, e.g. <code style="font-family:var(--mono)">https://auth.example/application/o/mealie/</code></span></label>
+          <input id="issuer" type="text" spellcheck="false" placeholder="https://auth.example/application/o/mealie/" autocomplete="off">
+        </div>
+        <div class="row" id="audRow" hidden>
+          <label for="audience">Audience <span class="sub">— optional; require this value in the token's <code style="font-family:var(--mono)">aud</code> (usually the Authentik client id)</span></label>
+          <input id="audience" type="text" spellcheck="false" placeholder="leave empty to skip audience check" autocomplete="off">
+        </div>
+
         <div class="row">
           <label>Authentication</label>
           <div class="seg" id="authmode" role="group" aria-label="Auth mode">
@@ -563,7 +595,7 @@
     url:"http://localhost:9925",
     path:"/path/to/better-mealie-mcp",
     hosturl:"http://localhost:8000/mcp",
-    token:"", user:"", pass:"", tags:[], ctx:"lean",
+    token:"", user:"", pass:"", apikey:"", mcpauth:"none", puburl:"", issuer:"", audience:"", tags:[], ctx:"lean",
   };
 
   const $ = s => document.querySelector(s);
@@ -670,17 +702,18 @@
   bindSeg("#method", "method", syncMethod);
   bindSeg("#transport", "transport", syncTransport);
   bindSeg("#authmode", "auth", syncAuth);
+  bindSeg("#mcpauth", "mcpauth", syncMcpAuth);
   bindSeg("#ctx", "ctx");
 
   const bindInput = (sel, key) => $(sel).addEventListener("input", e => { state[key] = e.target.value; render(); });
   bindInput("#url","url"); bindInput("#path","path"); bindInput("#hosturl","hosturl");
-  bindInput("#token","token"); bindInput("#user","user"); bindInput("#pass","pass");
+  bindInput("#token","token"); bindInput("#user","user"); bindInput("#pass","pass"); bindInput("#apikey","apikey"); bindInput("#puburl","puburl"); bindInput("#issuer","issuer"); bindInput("#audience","audience");
 
   const reveal = (btnSel, inSel) => $(btnSel).addEventListener("click", () => {
     const i = $(inSel); const show = i.type === "password";
     i.type = show ? "text" : "password"; $(btnSel).textContent = show ? "Hide" : "Show";
   });
-  reveal("#revToken","#token"); reveal("#revPass","#pass");
+  reveal("#revToken","#token"); reveal("#revPass","#pass"); reveal("#revApiKey","#apikey");
 
   function syncClient() {
     clientsEl.querySelectorAll(".client").forEach(b => b.setAttribute("aria-pressed", b.dataset.id === state.client));
@@ -705,6 +738,18 @@
     // the repo path only matters when running from a source checkout
     $("#pathRow").hidden = !stdio || state.method !== "source";
     $("#hostRow").hidden = stdio;
+    $("#mcpauthRow").hidden = stdio;
+    syncMcpAuth();
+  }
+  function syncMcpAuth() {
+    const http = state.transport === "http";
+    const keyLike = state.mcpauth === "key" || state.mcpauth === "both";
+    const authzLike = state.mcpauth === "authentik" || state.mcpauth === "both";
+    const authkLike = state.mcpauth === "authentik" || state.mcpauth === "both";
+    $("#apiKeyRow").hidden = !http || !keyLike;
+    $("#pubRow").hidden = !http || !authzLike;
+    $("#issuerRow").hidden = !http || !authkLike;
+    $("#audRow").hidden = !http || !authkLike;
   }
   function syncAuth() {
     const tok = state.auth === "token";
@@ -719,6 +764,24 @@
     if (state.auth === "token") p.push(["MEALIE_API_TOKEN", state.token || "YOUR_API_TOKEN"]);
     else { p.push(["MEALIE_USERNAME", state.user || "changeme@example.com"]); p.push(["MEALIE_PASSWORD", state.pass || "MyPassword"]); }
     if (state.tags.length) p.push(["MEALIE_INCLUDE_TAGS", state.tags.join(",")]);
+    // HTTP auth: only meaningful over HTTP; stdio ignores these, so keep the
+    // env clean. Emit MCP_AUTH_MODE only when it changes the server default.
+    if (state.transport === "http" && state.mcpauth !== "none") {
+      if (state.mcpauth === "authentik" || state.mcpauth === "both") {
+        if (state.puburl && state.issuer) {
+          p.push(["MCP_AUTH_MODE", state.mcpauth]);
+          p.push(["MCP_PUBLIC_BASE_URL", state.puburl]);
+          p.push(["MCP_AUTH_ISSUER", state.issuer]);
+          if (state.audience) p.push(["MCP_AUTH_AUDIENCE", state.audience]);
+          if (state.mcpauth === "both" && state.apikey) p.push(["MCP_AUTH_TOKEN", state.apikey]);
+        }
+      } else if (state.mcpauth === "key") {
+        if (state.apikey) {
+          p.push(["MCP_AUTH_MODE", "key"]);
+          p.push(["MCP_AUTH_TOKEN", state.apikey]);
+        }
+      }
+    }
     // Lean is the server default → only emit vars for the other two modes.
     if (state.ctx === "leanest") p.push(["MEALIE_SLIM_AGGRESSIVE", "true"]);
     else if (state.ctx === "full") { p.push(["MEALIE_SLIM_SCHEMAS", "false"]); p.push(["MEALIE_VALIDATE_OUTPUT", "true"]); }
@@ -793,6 +856,12 @@
       return `docker run --rm -p 8000:8000 \\\n  ${env.map(([k,v]) => `-e ${k}=${v}`).join(" \\\n  ")} \\\n  ${IMAGE} --http 8000`;
     return `${envLine} \\\n  uv run --directory ${state.path || DEFPATH} server.py --http 8000`;
   }
+  // Bearer header for generated HTTP client configs when an API key is used.
+  function httpAuthExtra() {
+    const keyLike = state.mcpauth === "key" || state.mcpauth === "both";
+    return state.transport === "http" && keyLike && state.apikey
+      ? { headers: { Authorization: `Bearer ${state.apikey}` } } : {};
+  }
 
   // ---- syntax-highlight helpers ----
   // Single-pass: the replacer output is never re-scanned, so injected <span>
@@ -830,7 +899,7 @@
     else if (state.client === "vscode") {
       const server = state.transport === "stdio"
         ? { type:"stdio", ...stdioCmd(env), env:Object.fromEntries(env) }
-        : { type:"http", url:state.hosturl || "http://localhost:8000/mcp" };
+        : { type:"http", url:state.hosturl || "http://localhost:8000/mcp", ...httpAuthExtra() };
       blocks.push({ lbl:c.file, code:true, json:true, html: hlJson({ servers:{ [ALIAS]:server } }) });
     }
     else if (state.client === "chatgpt") {
@@ -839,7 +908,7 @@
     else { // claude-desktop, cursor, gemini  → mcpServers JSON
       const server = state.transport === "stdio"
         ? { ...stdioCmd(env), env:Object.fromEntries(env) }
-        : { url:state.hosturl || "http://localhost:8000/mcp" };
+        : { url:state.hosturl || "http://localhost:8000/mcp", ...httpAuthExtra() };
       const key = state.transport === "stdio" ? "mcpServers"
                 : (state.client === "gemini" ? "mcpServers" : "mcpServers");
       const label = state.transport === "http" ? c.file + "  (add url entry)" : c.file;
@@ -873,6 +942,11 @@
 
     if (state.method === "docker" && /localhost|127\.0\.0\.1/.test(state.url)) n.push(`<span class="warn">Docker can't reach <code>localhost</code> on your machine.</span> If Mealie runs on this host, use <code>http://host.docker.internal:9925</code> (macOS/Windows) or your host's LAN IP (Linux) as the Mealie base URL.`);
     if (state.transport === "http") n.push(`Keep the server process running — the client connects to it over HTTP at <code>${esc(state.hosturl||"http://localhost:8000/mcp")}</code>.`);
+    if (state.transport === "http" && state.mcpauth === "authentik" || state.transport === "http" && state.mcpauth === "both") n.push(`<span class="warn">Use your Authentik as the login.</span> Create an OAuth2/OIDC provider in Authentik for the AI tool and paste its issuer above — the server then only accepts tokens Authentik issued, so access is tied to your Authentik users. Configure that provider (client id/secret) in your AI tool's connector settings; it discovers this server and Authentik automatically via <code>/.well-known/oauth-protected-resource</code>.`);
+    const keyLike = state.mcpauth === "key" || state.mcpauth === "both";
+    if (state.transport === "http" && keyLike && state.apikey && state.mcpauth !== "key") n.push(`<code>MCP_AUTH_MODE=${state.mcpauth}</code> also accepts the API key below, so scripts keep working while Authentik users sign in.`);
+    if (state.transport === "http" && state.mcpauth === "none") n.push(`HTTP auth is off — anyone who can reach the URL can call the server. Fine for trusted/local setups; use <code>key</code> or <code>both</code> for anything public.`);
+    if (state.transport === "http" && keyLike && state.apikey) n.push(`<code>MCP_AUTH_TOKEN</code> is baked into the <b>1 · start the HTTP server</b> command and the client <code>headers</code> — any request without <code>Authorization: Bearer ${esc(state.apikey)}</code> is rejected with <code>401</code>. Use a fresh random string (<code>openssl rand -hex 32</code>) and keep it secret.`);
     if (state.auth === "token") n.push(state.token ? `Token embedded above.` : `No token entered yet — the placeholder <code>YOUR_API_TOKEN</code> is shown. Paste yours to bake it in.`);
     else n.push(`Server logs in with these credentials at startup to fetch a token. An API token is preferred for anything long-lived.`);
     return n.map(x => `<p>${x}</p>`).join("");
