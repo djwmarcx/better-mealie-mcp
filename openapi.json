@@ -3,7 +3,7 @@
   "info": {
     "title": "Mealie",
     "description": "\nMealie is a web application for managing your recipes, meal plans, and shopping lists. This is the Restful\nAPI interactive documentation that can be used to explore the API. If you're justing getting started with\nthe API and want to get started quickly, you can use the\n[API Usage | Mealie Docs](https://docs.mealie.io/documentation/getting-started/api-usage/)\nas a reference for how to get started.\n\n\nIf you have any questions or comments about mealie, please use the discord server to talk to the developers or other\ncommunity members. If you'd like to file an issue, please use the\n[GitHub Issue Tracker | Mealie](https://github.com/mealie-recipes/mealie/issues/new/choose)\n\n\n## Helpful Links\n- [Home Page](https://mealie.io)\n- [Documentation](https://docs.mealie.io)\n- [Discord](https://discord.gg/QuStdQGSGK)\n- [Demo](https://demo.mealie.io)\n",
-    "version": "v3.27.0"
+    "version": "v3.28.0"
   },
   "paths": {
     "/api/app/about": {
@@ -8337,71 +8337,6 @@
         }
       }
     },
-    "/api/groups/seeders/labels": {
-      "post": {
-        "tags": [
-          "Groups: Seeders",
-          "Groups: Seeders"
-        ],
-        "summary": "Seed Labels",
-        "operationId": "seed_labels_api_groups_seeders_labels_post",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "accept-language",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Accept-Language"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SeederConfig"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/groups/seeders/units": {
       "post": {
         "tags": [
@@ -10653,6 +10588,81 @@
             "multipart/form-data": {
               "schema": {
                 "$ref": "#/components/schemas/Body_upload_recipe_asset_api_recipes__slug__assets_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeAsset"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recipes/{slug}/assets/url": {
+      "post": {
+        "tags": [
+          "Recipe: CRUD",
+          "Recipe: Images and Assets"
+        ],
+        "summary": "Create Recipe Asset From Url",
+        "description": "Download an image from a URL and store it as a recipe asset.",
+        "operationId": "create_recipe_asset_from_url_api_recipes__slug__assets_url_post",
+        "security": [
+          {
+            "OAuth2PasswordBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          },
+          {
+            "name": "accept-language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Accept-Language"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScrapeRecipe"
               }
             }
           }
@@ -27177,6 +27187,11 @@
       },
       "RecipeCommentOut-Input": {
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
           "recipeId": {
             "type": "string",
             "format": "uuid",
@@ -27185,11 +27200,6 @@
           "text": {
             "type": "string",
             "title": "Text"
-          },
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "title": "Id"
           },
           "createdAt": {
             "type": "string",
@@ -27212,9 +27222,9 @@
         },
         "type": "object",
         "required": [
+          "id",
           "recipeId",
           "text",
-          "id",
           "createdAt",
           "update_at",
           "userId",
@@ -27224,6 +27234,11 @@
       },
       "RecipeCommentOut-Output": {
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
           "recipeId": {
             "type": "string",
             "format": "uuid",
@@ -27232,11 +27247,6 @@
           "text": {
             "type": "string",
             "title": "Text"
-          },
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "title": "Id"
           },
           "createdAt": {
             "type": "string",
@@ -27259,9 +27269,9 @@
         },
         "type": "object",
         "required": [
+          "id",
           "recipeId",
           "text",
-          "id",
           "createdAt",
           "updatedAt",
           "userId",

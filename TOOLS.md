@@ -106,7 +106,7 @@
 | `update_foods_by_item` | PUT | `/api/foods/{item_id}` |
 | `update_foods_merge` | PUT | `/api/foods/merge` |
 
-## `groups` (28)
+## `groups` (27)
 
 | tool | method | path |
 |------|--------|------|
@@ -116,7 +116,6 @@
 | `create_groups_labels` | POST | `/api/groups/labels` |
 | `create_groups_migrations` | POST | `/api/groups/migrations` |
 | `create_groups_seeders_foods` | POST | `/api/groups/seeders/foods` |
-| `create_groups_seeders_labels` | POST | `/api/groups/seeders/labels` |
 | `create_groups_seeders_units` | POST | `/api/groups/seeders/units` |
 | `delete_groups_ai_providers_providers_by_provider` | DELETE | `/api/groups/ai-providers/providers/{provider_id}` |
 | `delete_groups_labels_by_item` | DELETE | `/api/groups/labels/{item_id}` |
@@ -252,7 +251,7 @@
 | `create_parser_ingredient` | POST | `/api/parser/ingredient` |
 | `create_parser_ingredients` | POST | `/api/parser/ingredients` |
 
-## `recipes` (43)
+## `recipes` (44)
 
 | tool | method | path |
 |------|--------|------|
@@ -263,6 +262,7 @@
 | `create_recipes_bulk_actions_settings` | POST | `/api/recipes/bulk-actions/settings` |
 | `create_recipes_bulk_actions_tag` | POST | `/api/recipes/bulk-actions/tag` |
 | `create_recipes_by_slug_assets` | POST | `/api/recipes/{slug}/assets` |
+| `create_recipes_by_slug_assets_url` | POST | `/api/recipes/{slug}/assets/url` |
 | `create_recipes_by_slug_duplicate` | POST | `/api/recipes/{slug}/duplicate` |
 | `create_recipes_by_slug_image` | POST | `/api/recipes/{slug}/image` |
 | `create_recipes_create_ai` | POST | `/api/recipes/create/ai` |
