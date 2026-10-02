@@ -13,6 +13,16 @@ Optional knobs:
   MCP_SERVER_NAME     MCP server name advertised to clients (default "Better Mealie MCP")
   MCP_HOST            bind address in --http mode (default 127.0.0.1; the Docker
                       image sets 0.0.0.0)
+  MCP_AUTH_MODE       HTTP auth: "none" (default) | "key" | "authentik" |
+                      "both" (= Authentik token or API key)
+  MCP_AUTH_TOKEN      API key required in "key"/"both" modes as
+                      "Authorization: Bearer <token>" on every HTTP request to
+                      /mcp (no effect in stdio mode)
+  MCP_PUBLIC_BASE_URL public HTTPS URL needed by "authentik"/"both" modes so
+                      discovery metadata resolves correctly
+  MCP_AUTH_ISSUER     Authentik OIDC issuer URL (required for "authentik" and
+                      "both"); also MCP_AUTH_AUDIENCE / MCP_AUTH_SCOPES /
+                      MCP_AUTH_DISCOVERY_URL
 
 Run:
   uv run better-mealie-mcp              # stdio, from a source checkout
@@ -33,6 +43,7 @@ from dotenv import load_dotenv
 from fastmcp import FastMCP
 from fastmcp.server.providers.openapi import MCPType, RouteMap
 
+from .auth import build_auth
 from .naming import build_names, normalize, slim
 
 load_dotenv()  # pick up a local .env if present
@@ -44,6 +55,10 @@ PASSWORD = os.environ.get("MEALIE_PASSWORD")
 TIMEOUT = float(os.environ.get("MEALIE_TIMEOUT", "60"))
 VERIFY_SSL = os.environ.get("MEALIE_VERIFY_SSL", "true").lower() not in ("false", "0", "no")
 SERVER_NAME = os.environ.get("MCP_SERVER_NAME", "Better Mealie MCP")
+# HTTP auth (--http mode only): selected by MCP_AUTH_MODE via .auth.build_auth().
+# Unset/“none” keeps the endpoint open for local/trusted setups; see .auth for
+# the "key" (API key), "authentik" (OIDC via Authentik) and "both" (authentik
+# OR key) modes. The built-in OAuth server was removed — it auto-approved.
 # Optional tool filtering by Mealie API group (the first path segment, e.g.
 # "recipes", "households", "admin"). Fewer tools = leaner context / fits clients
 # that cap tool counts. INCLUDE wins if both are set; unset = every endpoint.
@@ -150,6 +165,7 @@ def build_server() -> FastMCP:
         # Off by default for a lean context; set MEALIE_VALIDATE_OUTPUT=true to
         # restore structured-output schemas.
         validate_output=VALIDATE_OUTPUT,
+        auth=build_auth(),
     )
 
 
@@ -165,3 +181,7 @@ def main() -> None:
         mcp.run(transport="http", host=host, port=port)
     else:
         mcp.run()
+
+
+if __name__ == "__main__":
+    main()
