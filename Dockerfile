@@ -21,7 +21,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev --no-editable
 
 # --- Runtime stage ---
-FROM python:3.14-slim
+FROM python:3.15-slim
 
 LABEL org.opencontainers.image.title="Better Mealie MCP" \
       org.opencontainers.image.description="MCP server exposing every Mealie API endpoint via FastMCP" \
