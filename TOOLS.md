@@ -1,6 +1,6 @@
 # Better Mealie MCP — Tool Reference
 
-**266 tools**, auto-generated from Mealie's OpenAPI spec. Every endpoint included, none excluded.
+**277 tools**, auto-generated from Mealie's OpenAPI spec. Every endpoint included, none excluded.
 
 ## `admin` (38)
 
@@ -45,15 +45,16 @@
 | `update_admin_households_by_item` | PUT | `/api/admin/households/{item_id}` |
 | `update_admin_users_by_item` | PUT | `/api/admin/users/{item_id}` |
 
-## `app` (3)
+## `app` (4)
 
 | tool | method | path |
 |------|--------|------|
 | `list_app_about` | GET | `/api/app/about` |
+| `list_app_about_branding_logo` | GET | `/api/app/about/branding-logo` |
 | `list_app_about_startup_info` | GET | `/api/app/about/startup-info` |
 | `list_app_about_theme` | GET | `/api/app/about/theme` |
 
-## `auth` (7)
+## `auth` (8)
 
 | tool | method | path |
 |------|--------|------|
@@ -64,6 +65,7 @@
 | `list_auth_oauth` | GET | `/api/auth/oauth` |
 | `list_auth_oauth_callback` | GET | `/api/auth/oauth/callback` |
 | `list_auth_oauth_native_config` | GET | `/api/auth/oauth/native/config` |
+| `list_auth_reverse_proxy` | GET | `/api/auth/reverse-proxy` |
 
 ## `comments` (5)
 
@@ -95,7 +97,7 @@
 | `list_explore_groups_by_group_slug_recipes` | GET | `/api/explore/groups/{group_slug}/recipes` |
 | `list_explore_groups_by_group_slug_recipes_suggestions` | GET | `/api/explore/groups/{group_slug}/recipes/suggestions` |
 
-## `foods` (6)
+## `foods` (7)
 
 | tool | method | path |
 |------|--------|------|
@@ -103,10 +105,11 @@
 | `delete_foods_by_item` | DELETE | `/api/foods/{item_id}` |
 | `get_foods_by_item` | GET | `/api/foods/{item_id}` |
 | `list_foods` | GET | `/api/foods` |
+| `list_foods_empty` | GET | `/api/foods/empty` |
 | `update_foods_by_item` | PUT | `/api/foods/{item_id}` |
 | `update_foods_merge` | PUT | `/api/foods/merge` |
 
-## `groups` (27)
+## `groups` (29)
 
 | tool | method | path |
 |------|--------|------|
@@ -114,6 +117,7 @@
 | `create_groups_ai_providers_providers_by_provider_test` | POST | `/api/groups/ai-providers/providers/{provider_id}/test` |
 | `create_groups_ai_providers_providers_test` | POST | `/api/groups/ai-providers/providers/test` |
 | `create_groups_labels` | POST | `/api/groups/labels` |
+| `create_groups_labels_merge` | POST | `/api/groups/labels/merge` |
 | `create_groups_migrations` | POST | `/api/groups/migrations` |
 | `create_groups_seeders_foods` | POST | `/api/groups/seeders/foods` |
 | `create_groups_seeders_units` | POST | `/api/groups/seeders/units` |
@@ -128,6 +132,7 @@
 | `list_groups_ai_providers_settings` | GET | `/api/groups/ai-providers/settings` |
 | `list_groups_households` | GET | `/api/groups/households` |
 | `list_groups_labels` | GET | `/api/groups/labels` |
+| `list_groups_labels_empty` | GET | `/api/groups/labels/empty` |
 | `list_groups_members` | GET | `/api/groups/members` |
 | `list_groups_preferences` | GET | `/api/groups/preferences` |
 | `list_groups_reports` | GET | `/api/groups/reports` |
@@ -138,7 +143,7 @@
 | `update_groups_labels_by_item` | PUT | `/api/groups/labels/{item_id}` |
 | `update_groups_preferences` | PUT | `/api/groups/preferences` |
 
-## `households` (64)
+## `households` (68)
 
 | tool | method | path |
 |------|--------|------|
@@ -148,6 +153,7 @@
 | `create_households_invitations` | POST | `/api/households/invitations` |
 | `create_households_invitations_email` | POST | `/api/households/invitations/email` |
 | `create_households_mealplans` | POST | `/api/households/mealplans` |
+| `create_households_mealplans_ical` | POST | `/api/households/mealplans/ical` |
 | `create_households_mealplans_random` | POST | `/api/households/mealplans/random` |
 | `create_households_mealplans_rules` | POST | `/api/households/mealplans/rules` |
 | `create_households_recipe_actions` | POST | `/api/households/recipe-actions` |
@@ -164,6 +170,7 @@
 | `delete_households_cookbooks_by_item` | DELETE | `/api/households/cookbooks/{item_id}` |
 | `delete_households_events_notifications_by_item` | DELETE | `/api/households/events/notifications/{item_id}` |
 | `delete_households_mealplans_by_item` | DELETE | `/api/households/mealplans/{item_id}` |
+| `delete_households_mealplans_ical` | DELETE | `/api/households/mealplans/ical` |
 | `delete_households_mealplans_rules_by_item` | DELETE | `/api/households/mealplans/rules/{item_id}` |
 | `delete_households_recipe_actions_by_item` | DELETE | `/api/households/recipe-actions/{item_id}` |
 | `delete_households_shopping_items` | DELETE | `/api/households/shopping/items` |
@@ -173,6 +180,7 @@
 | `get_households_cookbooks_by_item` | GET | `/api/households/cookbooks/{item_id}` |
 | `get_households_events_notifications_by_item` | GET | `/api/households/events/notifications/{item_id}` |
 | `get_households_mealplans_by_item` | GET | `/api/households/mealplans/{item_id}` |
+| `get_households_mealplans_ical_by_token` | GET | `/api/households/mealplans/ical/{token}` |
 | `get_households_mealplans_rules_by_item` | GET | `/api/households/mealplans/rules/{item_id}` |
 | `get_households_recipe_actions_by_item` | GET | `/api/households/recipe-actions/{item_id}` |
 | `get_households_self_recipes_by_recipe_slug` | GET | `/api/households/self/recipes/{recipe_slug}` |
@@ -183,6 +191,7 @@
 | `list_households_events_notifications` | GET | `/api/households/events/notifications` |
 | `list_households_invitations` | GET | `/api/households/invitations` |
 | `list_households_mealplans` | GET | `/api/households/mealplans` |
+| `list_households_mealplans_ical` | GET | `/api/households/mealplans/ical` |
 | `list_households_mealplans_rules` | GET | `/api/households/mealplans/rules` |
 | `list_households_mealplans_today` | GET | `/api/households/mealplans/today` |
 | `list_households_members` | GET | `/api/households/members` |
@@ -217,7 +226,7 @@
 | `get_media_users_by_user_by_file_name` | GET | `/api/media/users/{user_id}/{file_name}` |
 | `list_media_docker_validate_txt` | GET | `/api/media/docker/validate.txt` |
 
-## `organizers` (22)
+## `organizers` (24)
 
 | tool | method | path |
 |------|--------|------|
@@ -226,6 +235,7 @@
 | `create_organizers_tags` | POST | `/api/organizers/tags` |
 | `create_organizers_tags_merge` | POST | `/api/organizers/tags/merge` |
 | `create_organizers_tools` | POST | `/api/organizers/tools` |
+| `create_organizers_tools_merge` | POST | `/api/organizers/tools/merge` |
 | `delete_organizers_categories_by_item` | DELETE | `/api/organizers/categories/{item_id}` |
 | `delete_organizers_tags_by_item` | DELETE | `/api/organizers/tags/{item_id}` |
 | `delete_organizers_tools_by_item` | DELETE | `/api/organizers/tools/{item_id}` |
@@ -240,6 +250,7 @@
 | `list_organizers_tags` | GET | `/api/organizers/tags` |
 | `list_organizers_tags_empty` | GET | `/api/organizers/tags/empty` |
 | `list_organizers_tools` | GET | `/api/organizers/tools` |
+| `list_organizers_tools_empty` | GET | `/api/organizers/tools/empty` |
 | `update_organizers_categories_by_item` | PUT | `/api/organizers/categories/{item_id}` |
 | `update_organizers_tags_by_item` | PUT | `/api/organizers/tags/{item_id}` |
 | `update_organizers_tools_by_item` | PUT | `/api/organizers/tools/{item_id}` |
