@@ -34,6 +34,15 @@ jobs:
           ACTOR: ${{ github.actor }}
         run: printf '%s' "$GH_TOKEN" | docker login ghcr.io -u "$ACTOR" --password-stdin
 
+      # Build once for the runner's arch and import the server before pushing:
+      # catches a broken image (e.g. builder/runtime Python mismatch, #61)
+      # before it reaches :latest. The placeholder token keeps it offline.
+      - name: Smoke-test image
+        run: |
+          docker buildx build --platform linux/amd64 -t smoke --load .
+          docker run --rm -e MEALIE_API_TOKEN=smoke --entrypoint python smoke \
+            -c "from better_mealie_mcp.server import mcp; print('ok', mcp.name)"
+
       - name: Build and push image (amd64 + arm64)
         env:
           REPO: ${{ github.repository }}

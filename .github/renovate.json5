@@ -26,5 +26,14 @@
       matchManagers: ["pep621"],
       groupName: "python dependencies",
     },
+    {
+      // The runtime image must match the uv builder's Python: the venv is built
+      // for the builder's version, so bumping only the runtime breaks the
+      // image (#61). Hold it until both stages (and .python-version) move
+      // together by hand.
+      matchManagers: ["dockerfile"],
+      matchDepNames: ["python"],
+      allowedVersions: "<3.15",
+    },
   ],
 }
