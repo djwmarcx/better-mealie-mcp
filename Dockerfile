@@ -3,7 +3,7 @@
 # Multi-stage: uv resolves deps, slim Python runs them.
 
 # --- Build stage ---
-FROM ghcr.io/astral-sh/uv:python3.14-bookworm-slim AS builder
+FROM ghcr.io/astral-sh/uv:python3.15-trixie-slim AS builder
 
 WORKDIR /app
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
