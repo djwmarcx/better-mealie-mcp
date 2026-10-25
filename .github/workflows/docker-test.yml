@@ -5,8 +5,9 @@ name: Test Docker image
 # that build fine but can't start, e.g. a builder/runtime Python mismatch (#61).
 #
 # Spec-update PRs are opened with GITHUB_TOKEN, which doesn't trigger
-# pull_request runs; they're still covered by the push run after merge and by
-# the same smoke test gating publish.yml.
+# pull_request runs, and their release publishes in parallel with the push run
+# here. For them the gate is the smoke test in publish.yml (amd64 + arm64),
+# which runs before anything is pushed.
 
 on:
   pull_request:
@@ -19,7 +20,8 @@ permissions:
 
 concurrency:
   group: docker-test-${{ github.ref }}
-  cancel-in-progress: true
+  # Supersede stale PR runs, but verify every commit that lands on main.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   image:
@@ -33,6 +35,7 @@ jobs:
           - arch: arm64
             runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
