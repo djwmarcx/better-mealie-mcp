@@ -34,6 +34,13 @@ jobs:
           ACTOR: ${{ github.actor }}
         run: printf '%s' "$GH_TOKEN" | docker login ghcr.io -u "$ACTOR" --password-stdin
 
+      # Never push an image that can't start: build for the runner's arch and
+      # run the same smoke test as the docker-test workflow first.
+      - name: Smoke-test image
+        run: |
+          docker buildx build --platform linux/amd64 -t better-mealie-mcp:smoke --load .
+          scripts/smoke_image.sh better-mealie-mcp:smoke
+
       - name: Build and push image (amd64 + arm64)
         env:
           REPO: ${{ github.repository }}
