@@ -43,7 +43,9 @@ jobs:
           INPUT_TAG: ${{ github.event.inputs.mealie_tag }}
         run: |
           TAG="${INPUT_TAG:-$MEALIE_TAG_DEFAULT}"
-          if ! printf '%s' "$TAG" | grep -Eq '^[A-Za-z0-9][A-Za-z0-9._-]*$'; then
+          # [[ =~ ]] matches the whole string; grep would pass a value whose
+          # first line looks valid, and $GITHUB_ENV is line-based.
+          if ! [[ "$TAG" =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then
             echo "::error::Invalid Mealie tag: $TAG"; exit 1
           fi
           echo "MEALIE_TAG=$TAG" >> "$GITHUB_ENV"
@@ -60,6 +62,12 @@ jobs:
             sleep 3
           done
           VER="$(curl -fsS http://localhost:9925/api/app/about | python -c 'import sys,json;print(json.load(sys.stdin)["version"])')"
+          # Untrusted container output: it becomes an env var (a newline here
+          # would define arbitrary variables for later steps), a branch name
+          # and a dispatch ref, so accept only a plain version string.
+          if ! [[ "$VER" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+([.-][A-Za-z0-9]+)*$ ]]; then
+            echo "::error::Unexpected Mealie version: $VER"; exit 1
+          fi
           echo "MEALIE_VERSION=$VER" >> "$GITHUB_ENV"
           echo "Mealie reports version: $VER"
 
@@ -70,6 +78,7 @@ jobs:
           python scripts/gen_tools.py   # normalizes + pretty-writes openapi.json
 
       - name: Open a PR if the spec changed
+        id: pr
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -103,7 +112,69 @@ jobs:
             --title "chore: sync Mealie OpenAPI spec (${MEALIE_VERSION})" \
             --body-file /tmp/notes.md \
           || gh pr edit "$BRANCH" --body-file /tmp/notes.md
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Stop Mealie
         if: always()
         run: docker rm -f mealie || true
+
+    outputs:
+      branch: ${{ steps.pr.outputs.branch }}
+      sha: ${{ steps.pr.outputs.sha }}
+
+  # GitHub creates the pull_request run of docker-test for the bot's PR but
+  # holds it for manual approval (github-actions[bot] counts as a first-time
+  # contributor), and the required checks wait on exactly that run. Approve
+  # it so the PR can merge. A separate job so actions: write is held only
+  # here, with no checkout and no third-party code.
+  approve-checks:
+    needs: update
+    if: needs.update.outputs.branch != ''
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write   # approve the held run
+      contents: read
+    steps:
+      - name: Approve the held docker-test run on the spec branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          BRANCH: ${{ needs.update.outputs.branch }}
+          SHA: ${{ needs.update.outputs.sha }}
+        run: |
+          # Re-check here: this job holds actions: write, so it trusts nothing
+          # it did not validate itself.
+          if ! [[ "$BRANCH" =~ ^bot/spec-v?[0-9]+\.[0-9]+\.[0-9]+([.-][A-Za-z0-9]+)*$ ]]; then
+            echo "::error::Unexpected spec branch: $BRANCH"; exit 1
+          fi
+          if ! [[ "$SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::Unexpected commit: $SHA"; exit 1
+          fi
+          # The run appears asynchronously after the PR is opened or refreshed.
+          # Match on head repository, branch, workflow file and exact commit, so
+          # a fork PR carrying the same commit under the same branch name can
+          # never be the run that gets approved.
+          runs=""
+          for _ in $(seq 1 18); do
+            runs="$(gh api "repos/$GH_REPO/actions/runs?event=pull_request&head_sha=$SHA&per_page=50" \
+              --jq '.workflow_runs[]
+                    | select(.head_repository.full_name == env.GH_REPO
+                             and .head_branch == env.BRANCH
+                             and .path == ".github/workflows/docker-test.yml")
+                    | "\(.id) \(.status) \(.conclusion)"')"
+            [ -n "$runs" ] && break
+            sleep 10
+          done
+          if [ -z "$runs" ]; then
+            echo "::error::No docker-test run for $BRANCH@${SHA:0:7}; check the PR by hand."
+            exit 1
+          fi
+          while read -r run_id status conclusion; do
+            if [ "$conclusion" = "action_required" ]; then
+              gh api -X POST "repos/$GH_REPO/actions/runs/$run_id/approve"
+              echo "approved held run $run_id"
+            else
+              echo "run $run_id is $status/$conclusion; nothing to approve"
+            fi
+          done <<<"$runs"
