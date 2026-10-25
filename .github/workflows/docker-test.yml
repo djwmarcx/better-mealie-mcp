@@ -4,10 +4,11 @@ name: Test Docker image
 # every push to main, natively on both shipped architectures. Catches images
 # that build fine but can't start, e.g. a builder/runtime Python mismatch (#61).
 #
-# Spec-update PRs are opened with GITHUB_TOKEN, which doesn't trigger
-# pull_request runs, and their release publishes in parallel with the push run
-# here. For them the gate is the smoke test in publish.yml (amd64 + arm64),
-# which runs before anything is pushed.
+# Both jobs are required status checks on main, matched by their job names:
+# renaming one blocks every merge until branch protection is updated too.
+# Spec-update PRs are opened by github-actions[bot], so GitHub holds their
+# pull_request run for approval; update-spec approves it. publish.yml runs the
+# same smoke test (amd64 + arm64) before anything is pushed.
 
 on:
   pull_request:
