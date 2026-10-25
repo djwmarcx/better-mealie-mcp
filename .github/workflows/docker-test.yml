@@ -1,0 +1,46 @@
+name: Test Docker image
+
+# Builds the image and smoke-tests it (scripts/smoke_image.sh) on every PR and
+# every push to main, natively on both shipped architectures. Catches images
+# that build fine but can't start, e.g. a builder/runtime Python mismatch (#61).
+#
+# Spec-update PRs are opened with GITHUB_TOKEN, which doesn't trigger
+# pull_request runs, and their release publishes in parallel with the push run
+# here. For them the gate is the smoke test in publish.yml (amd64 + arm64),
+# which runs before anything is pushed.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docker-test-${{ github.ref }}
+  # Supersede stale PR runs, but verify every commit that lands on main.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  image:
+    name: Build and smoke-test (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build image
+        run: docker build -t better-mealie-mcp:smoke .
+
+      - name: Smoke-test image
+        run: scripts/smoke_image.sh better-mealie-mcp:smoke

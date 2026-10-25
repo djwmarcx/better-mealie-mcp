@@ -20,6 +20,7 @@ concurrency:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     permissions:
       packages: write
     steps:
@@ -27,6 +28,19 @@ jobs:
 
       - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+
+      # Never push an image that can't start: build each shipped arch (arm64
+      # via QEMU) and run the docker-test smoke test on it, before logging in
+      # so the untested image never runs next to registry credentials. The
+      # push below reuses these cached layers.
+      - name: Smoke-test image (amd64 + arm64)
+        run: |
+          for platform in linux/amd64 linux/arm64; do
+            echo "::group::$platform"
+            docker buildx build --platform "$platform" -t better-mealie-mcp:smoke --load .
+            scripts/smoke_image.sh better-mealie-mcp:smoke
+            echo "::endgroup::"
+          done
 
       - name: Log in to GHCR
         env:
