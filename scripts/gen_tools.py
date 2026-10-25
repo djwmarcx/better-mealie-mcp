@@ -133,32 +133,46 @@ def context_costs(spec: dict, names: dict[str, str]) -> dict[str, dict[str, int]
     return costs
 
 
-def inject_costs(costs: dict) -> None:
-    """Write the per-group context-cost table into the wizard between markers."""
+def script_json(obj) -> str:
+    """JSON literal that is safe to embed inside a <script> block.
+
+    The payload carries strings taken from the Mealie spec (tags, path
+    segments). json.dumps leaves "<", ">" and "&" as-is, so a segment such as
+    "</script>" would close the block early and run as HTML. \\uXXXX escapes
+    are valid JSON, so JavaScript parses the literal identically.
+    """
+    return (
+        json.dumps(obj, separators=(",", ":"))
+        .replace("<", "\\u003c")
+        .replace(">", "\\u003e")
+        .replace("&", "\\u0026")
+        .replace(" ", "\\u2028")
+        .replace(" ", "\\u2029")
+    )
+
+
+def inject_wizard(marker: str, obj) -> None:
+    """Write `obj` into the wizard between /*<marker>_START*/ and /*<marker>_END*/."""
     if not WIZARD.exists():
         return
-    payload = json.dumps(costs, separators=(",", ":"))
+    payload = f"/*{marker}_START*/{script_json(obj)}/*{marker}_END*/"
     text = re.sub(
-        r"/\*COSTS_START\*/.*?/\*COSTS_END\*/",
-        f"/*COSTS_START*/{payload}/*COSTS_END*/",
+        rf"/\*{marker}_START\*/.*?/\*{marker}_END\*/",
+        lambda _m: payload,  # a callable: backslashes in the JSON are not template escapes
         WIZARD.read_text(),
         flags=re.DOTALL,
     )
     WIZARD.write_text(text)
+
+
+def inject_costs(costs: dict) -> None:
+    """Write the per-group context-cost table into the wizard."""
+    inject_wizard("COSTS", costs)
 
 
 def inject_groups(groups: list[dict]) -> None:
-    """Write the generated group list into the wizard between markers."""
-    if not WIZARD.exists():
-        return
-    payload = json.dumps(groups, separators=(",", ":"))
-    text = re.sub(
-        r"/\*GROUPS_START\*/.*?/\*GROUPS_END\*/",
-        f"/*GROUPS_START*/{payload}/*GROUPS_END*/",
-        WIZARD.read_text(),
-        flags=re.DOTALL,
-    )
-    WIZARD.write_text(text)
+    """Write the generated group list into the wizard."""
+    inject_wizard("GROUPS", groups)
 
 
 def sync_counts(total: int) -> None:
