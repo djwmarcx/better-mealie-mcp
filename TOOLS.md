@@ -1,6 +1,6 @@
 # Better Mealie MCP — Tool Reference
 
-**283 tools**, auto-generated from Mealie's OpenAPI spec. Every endpoint included, none excluded.
+**285 tools**, auto-generated from Mealie's OpenAPI spec. Every endpoint included, none excluded.
 
 ## `admin` (41)
 
@@ -149,7 +149,7 @@
 | `update_groups_labels_by_item` | PUT | `/api/groups/labels/{item_id}` |
 | `update_groups_preferences` | PUT | `/api/groups/preferences` |
 
-## `households` (68)
+## `households` (69)
 
 | tool | method | path |
 |------|--------|------|
@@ -194,6 +194,7 @@
 | `get_households_shopping_lists_by_item` | GET | `/api/households/shopping/lists/{item_id}` |
 | `get_households_webhooks_by_item` | GET | `/api/households/webhooks/{item_id}` |
 | `list_households_cookbooks` | GET | `/api/households/cookbooks` |
+| `list_households_cookbooks_by_item_pdf` | GET | `/api/households/cookbooks/{item_id}/pdf` |
 | `list_households_events_notifications` | GET | `/api/households/events/notifications` |
 | `list_households_invitations` | GET | `/api/households/invitations` |
 | `list_households_mealplans` | GET | `/api/households/mealplans` |
@@ -268,7 +269,7 @@
 | `create_parser_ingredient` | POST | `/api/parser/ingredient` |
 | `create_parser_ingredients` | POST | `/api/parser/ingredients` |
 
-## `recipes` (44)
+## `recipes` (45)
 
 | tool | method | path |
 |------|--------|------|
@@ -304,6 +305,7 @@
 | `list_recipes_bulk_actions_export_by_export_download` | GET | `/api/recipes/bulk-actions/export/{export_id}/download` |
 | `list_recipes_by_slug_comments` | GET | `/api/recipes/{slug}/comments` |
 | `list_recipes_by_slug_exports` | GET | `/api/recipes/{slug}/exports` |
+| `list_recipes_by_slug_exports_pdf` | GET | `/api/recipes/{slug}/exports/pdf` |
 | `list_recipes_exports` | GET | `/api/recipes/exports` |
 | `list_recipes_shared_by_token_zip` | GET | `/api/recipes/shared/{token_id}/zip` |
 | `list_recipes_suggestions` | GET | `/api/recipes/suggestions` |
