@@ -5,8 +5,8 @@ Usage:  python scripts/set_version.py <mealie_version> <date> <tools>
         e.g. python scripts/set_version.py v3.21.0 2026-08-01 261
 
 Writes MEALIE_VERSION, sets the pyproject version to the same value (minus a
-leading "v"), and prepends a row to the VERSIONS.md table. Idempotent: a row
-for the same (Mealie version, date) is not duplicated.
+leading "v"), and prepends a row to the VERSIONS.md table. Idempotent: a
+Mealie version that already has a row is not logged again.
 """
 
 from __future__ import annotations
@@ -21,9 +21,13 @@ ROOT = Path(__file__).resolve().parent.parent
 def main(mealie_version: str, date: str, tools: str) -> int:
     mcp_version = mealie_version.lstrip("v")
 
-    (ROOT / "MEALIE_VERSION").write_text(mealie_version + "\n")
-    # A new Mealie version resets the MCP revision counter to the base build.
-    (ROOT / "REVISION").write_text("1\n")
+    mealie_file = ROOT / "MEALIE_VERSION"
+    previous = mealie_file.read_text().strip() if mealie_file.exists() else ""
+    mealie_file.write_text(mealie_version + "\n")
+    # A new Mealie version resets the MCP revision counter to the base build;
+    # a re-sync of the same version keeps any MCP-only revision bump.
+    if previous != mealie_version:
+        (ROOT / "REVISION").write_text("1\n")
 
     pyproject = ROOT / "pyproject.toml"
     text = pyproject.read_text()
@@ -46,7 +50,9 @@ def main(mealie_version: str, date: str, tools: str) -> int:
     versions = ROOT / "VERSIONS.md"
     lines = versions.read_text().splitlines()
     row = f"| {mcp_version} | {mealie_version} | {date} | {tools} |"
-    if any(f"| {mealie_version} | {date} |" in ln for ln in lines):
+    # One row per Mealie version: a later re-sync of the same version (on a
+    # different date) must not add a second row.
+    if any(ln.startswith(f"| {mcp_version} | {mealie_version} |") for ln in lines):
         print("VERSIONS.md already has this row; not duplicating.")
     else:
         for i, ln in enumerate(lines):

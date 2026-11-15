@@ -36,7 +36,14 @@ jobs:
           python-version: "3.15"
 
       - name: Install project (gen_tools needs fastmcp + httpx to measure costs)
-        run: pip install .
+        # Install from uv.lock, not `pip install .`: the wizard's COSTS are
+        # measured through fastmcp, so unpinned deps made them drift with every
+        # fastmcp release and opened spurious "spec sync" PRs. The locked set
+        # is also what the Docker image ships, so the numbers match reality.
+        run: |
+          pip install uv
+          uv sync --locked
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
 
       - name: Resolve + validate the Mealie tag
         env:
@@ -82,8 +89,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if git diff --quiet; then
-            echo "Spec unchanged for ${MEALIE_VERSION} — nothing to do."
+          # Gate on the spec itself. Derived files (TOOLS.md, wizard COSTS) can
+          # drift on their own after a dependency bump; that is not a new spec
+          # and must not bump the version or log a VERSIONS.md row. They catch
+          # up with the next real spec sync.
+          if git diff --quiet -- openapi.json; then
+            echo "Spec unchanged for ${MEALIE_VERSION} - nothing to do."
             exit 0
           fi
 
@@ -92,7 +103,7 @@ jobs:
           python scripts/set_version.py "$MEALIE_VERSION" "$DATE" "$TOOLS"
           # set_version bumps pyproject's version; re-lock so `uv sync --locked`
           # (Docker build) keeps working.
-          pip install uv && uv lock
+          uv lock
           python scripts/spec_diff.py /tmp/old-spec.json openapi.json > /tmp/notes.md
           echo "----- proposed change -----"; cat /tmp/notes.md
 
@@ -112,6 +123,21 @@ jobs:
             --title "chore: sync Mealie OpenAPI spec (${MEALIE_VERSION})" \
             --body-file /tmp/notes.md \
           || gh pr edit "$BRANCH" --body-file /tmp/notes.md
+
+          # This branch is rebuilt from current main, so it already contains
+          # everything an older bot/spec-* PR would bring. Close those: two
+          # open spec PRs edit the same VERSIONS.md / wizard lines and the
+          # second one to merge always conflicts.
+          # Same-repo PRs only: a fork can name its branch bot/spec-* too.
+          BRANCH="$BRANCH" gh pr list --state open --base main \
+            --json number,headRefName,isCrossRepository \
+            --jq '.[] | select(.isCrossRepository | not)
+                      | select(.headRefName | startswith("bot/spec-"))
+                      | select(.headRefName != env.BRANCH) | .number' \
+          | while read -r n; do
+              gh pr close "$n" --delete-branch \
+                --comment "Superseded by the ${MEALIE_VERSION} spec sync on \`$BRANCH\`."
+            done
           echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
